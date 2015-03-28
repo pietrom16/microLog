@@ -8,8 +8,6 @@
  *   configuration file named: "microLog_config.hpp".
  *
  *   Author:    Pietro Mele
- *   Web site:  https://sites.google.com/site/pietrom16
- *   E-mail:    pietrom16@gmail.com
  */
 
 /* microLog is distributed under the following 3-clause BSD license:
