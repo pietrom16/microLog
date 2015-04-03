@@ -27,6 +27,11 @@ Other features:
 
 For better performance, consider logging to a ramdisk (TODO: external utility that periodically copies the log file from ramdisk to hard disk).
 
+Requirements:  
+
+- Built in single threaded mode: C++03 only.
+- Built in multithreading mode: C++03 and Boost, or C++11 only.
+
 Usage: See microLog_test.cpp as an example.
 
 If these features are not enough for you, I suggest this other, much more advanced, logger: [G3log](https://bitbucket.org/KjellKod/g3log)
