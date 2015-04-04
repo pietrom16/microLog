@@ -27,12 +27,19 @@ Other features:
 
 For better performance, consider logging to a ramdisk (TODO: external utility that periodically copies the log file from ramdisk to hard disk).
 
+Quick example:
+
+	uLOG_START_APP(logPath);
+	uLOG(warning) << "Test log message " << 123 << uLOGE;
+	uLOG_(detail, localLevel) << "Test log message " << 456 << uLOGE;
+
+For a complete example, see:  microLog_test.cpp
+
+
 Requirements:  
 
 - Built in single threaded mode: C++03 only.
 - Built in multithreading mode: C++03 and Boost, or C++11 only.
-
-Usage: See microLog_test.cpp as an example.
 
 If these features are not enough for you, I suggest this other, much more advanced, logger: [G3log](https://bitbucket.org/KjellKod/g3log)
 
