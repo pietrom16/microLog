@@ -502,10 +502,12 @@ namespace uLog {
 
         #define uLOGF(logfname, level, minLogLev, logMsg) {                                 \
             if(level >= minLogLev && uLog::CheckAvailableSpace(logfname)) {                 \
+                MICRO_LOG_LOCK;                                                             \
                 std::ofstream ofs(logfname, std::fstream::app);                             \
                 ofs << uLog::LogDate()                                                      \
                     << uLog::logLevelTags[level] << uLog::separator                         \
                     << logMsg << std::endl;                                                 \
+                MICRO_LOG_UNLOCK;                                                           \
             }                                                                               \
         }
 
