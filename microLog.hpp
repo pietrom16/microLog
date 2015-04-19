@@ -496,11 +496,11 @@ namespace uLog {
 
         #define uLOG(level)  uLOGS_(uLog::microLog_ofs, level, nolog)
 
-        #define uLOGF(logfname, level, minLogLev, logMsg) {                           \
-            if(level >= minLogLev && uLog::CheckAvailableSpace(logfname)) {           \
-                std::ofstream ofs(logfname, std::fstream::app);                       \
-                ofs << uLog::logLevelTags[level] << " " << logMsg << std::endl;       \
-            }                                                                         \
+        #define uLOGF(logfname, level, minLogLev, logMsg) {                                 \
+            if(level >= minLogLev && uLog::CheckAvailableSpace(logfname)) {                 \
+                std::ofstream ofs(logfname, std::fstream::app);                             \
+                ofs << uLog::logLevelTags[level] << uLog::separator << logMsg << std::endl; \
+            }                                                                               \
         }
 
         #define uLOG_TITLES_S(logstream, level)                                       \

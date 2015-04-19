@@ -11,15 +11,34 @@
 
 #ifdef MICRO_LOG_TEST
 
+#define uLOG_TEST_NO_INIT
+
+#ifdef uLOG_TEST_NO_INIT        // Test without logger initialization
+    #define MICRO_LOG_DLL
+#endif
+
 #include "microLog.hpp"
 
 #include <cmath>
 #include <iostream>
 #include <string>
 
+
+#ifdef uLOG_TEST_NO_INIT        // Test without logger initialization
+
+int Test_microLog(std::string logPath, int nTestCases = 1)
+{
+    for(size_t n = 0; n < nTestCases; ++n)
+    {
+        uLOGF(logPath, warning, info, "Test without logger initialization.");
+    }
+
+    return 0;
+}
+
+#else // uLOG_TEST_NO_INIT
+
 uLOG_INIT;     // microLog initialization
-
-
 
 int Test_microLog(std::string logPath, int nTestCases = 1)
 {
@@ -97,6 +116,8 @@ int Test_microLog(std::string logPath, int nTestCases = 1)
     return 0;
 }
 
+#endif  // uLOG_TEST_NO_INIT
+
 
 int main()
 {
@@ -132,7 +153,9 @@ int main()
 
     testResult = Test_microLog(logPath);
 
+#ifndef uLOG_TEST_NO_INIT        // Test without logger initialization
     uLog::Statistics::Log();
+#endif
 
     std::cout << "\nTest completed." << std::endl;
 
