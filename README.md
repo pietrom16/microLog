@@ -20,10 +20,13 @@ Other features:
 - Thread safe (C++11 threads, Boost threads or pthread).
 - It can be used when no debugger nor other logging system is available.
 - No objects to be defined.
-- To activate it, #define MICRO_LOG_ACTIVE.
+- To activate:                     #define MICRO_LOG_ACTIVE
+- To initalize, at global scope:   uLOG_INIT;
+- To start, tipically in main():   uLOG_START_APP(logPath);
 - When not activated, or when a log message level is below the threshold, there is no generated binary code.
 - uLOG(level) only logs if level >= MICRO_LOG_MIN_LEVEL and level >= ULog::minLogLevel.
 - uLOG_(level, localLevel) logs if level >= MICRO_LOG_MIN_LEVEL and (level >= ULog::minLogLevel or level >= localLevel).
+- In case it is not possible to initialize microLog, or it is not possible to modify the main() function to call uLOG_START_APP(), you can use:  uLOGF(logfname, level, minLogLev, logMsg)
 
 For better performance, consider logging to a ramdisk (TODO: external utility that periodically copies the log file from ramdisk to hard disk).
 
