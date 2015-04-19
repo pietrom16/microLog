@@ -645,6 +645,7 @@ namespace uLog {
 
         #define uLOG(level)                  if(0) microLog_ofs
         #define uLOG_(level, localMinLevel)  if(0) microLog_ofs
+        #define uLOGF(logfname, level, minLogLev, logMsg)
         #define uLOGE                        ""
         #define uLOG_DATE                    if(0) microLog_ofs
         #define uLOG_TITLES(level)           if(0) microLog_ofs
