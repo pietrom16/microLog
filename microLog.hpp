@@ -499,7 +499,9 @@ namespace uLog {
         #define uLOGF(logfname, level, minLogLev, logMsg) {                                 \
             if(level >= minLogLev && uLog::CheckAvailableSpace(logfname)) {                 \
                 std::ofstream ofs(logfname, std::fstream::app);                             \
-                ofs << uLog::logLevelTags[level] << uLog::separator << logMsg << std::endl; \
+                ofs << uLog::LogDate()                                                      \
+                    << uLog::logLevelTags[level] << uLog::separator                         \
+                    << logMsg << std::endl;                                                 \
             }                                                                               \
         }
 
