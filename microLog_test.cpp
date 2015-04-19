@@ -30,7 +30,7 @@ int Test_microLog(std::string logPath, int nTestCases = 1)
 {
     for(size_t n = 0; n < nTestCases; ++n)
     {
-        uLOGF(logPath, warning, info, "Test without logger initialization.");
+        uLOGF(logPath, warning, info, "Test n. " << n + 1 << " without logger initialization.");
     }
 
     return 0;
