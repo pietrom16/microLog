@@ -83,10 +83,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define MICRO_LOG_BOOST_THREAD   3
 #define MICRO_LOG_PTHREAD        4
 
+enum uLogLevels { nolog = 0, verbose, detail, info, warning, error, critical, fatal };
+
 namespace uLog {
     // Log levels (a custom levels enum can be used)
     static const int nLogLevels = 8;
-    enum             LogLevels                   {  nolog = 0, verbose,    detail,     info,       warning,    error,      critical,   fatal      };
     const char       logLevelTags[nLogLevels][9] { "  ----  ", "VERBOSE ", "DETAIL  ", "INFO    ", "WARNING ", "ERROR   ", "CRITICAL", "FATAL   " };
 }
 
@@ -250,44 +251,46 @@ namespace uLog {
         // Use this macro once in the main()'s file at global scope
 
         #ifndef MICRO_LOG_DLL
-            #define uLOG_INIT_0                                \
-                using namespace uLog;                          \
-                int uLog::minLogLevel = MICRO_LOG_MIN_LEVEL;   \
-                int uLog::loggerStatus = 0;                    \
-                std::string uLog::logFilename;                 \
-                std::ofstream uLog::microLog_ofs;              \
+            #define uLOG_INIT_0                          \
+                namespace uLog {                         \
+                int minLogLevel = MICRO_LOG_MIN_LEVEL;   \
+                int loggerStatus = 0;                    \
+                std::string logFilename;                 \
+                std::ofstream microLog_ofs;              \
                 int Statistics::nLogs = 0, Statistics::nNoLogs = 0, Statistics::nVerboseLogs = 0, Statistics::nDetailLogs = 0, Statistics::nInfoLogs = 0, Statistics::nWarningLogs = 0, Statistics::nErrorLogs = 0, Statistics::nCriticalLogs = 0, Statistics::nFatalLogs = 0; \
                 int Statistics::highestLevel = 0;              \
                 bool LogFields::time = false, LogFields::date = true, LogFields::llevel = true, LogFields::exec = false, \
                      LogFields::uid = false, LogFields::uname = false, LogFields::pid = false, \
                      LogFields::fileName = false, LogFields::filePath = false, LogFields::funcName = false, LogFields::funcSig = false, \
-                     LogFields::line = false, LogFields::log = true
+                     LogFields::line = false, LogFields::log = true; \
+                }
         #else
-            #define uLOG_INIT_0                                \
-                using namespace uLog;                          \
-                int uLog::minLogLevel = MICRO_LOG_MIN_LEVEL;   \
-                int uLog::loggerStatus = 0;                    \
-                std::string uLog::logFilename;                 \
-                std::ofstream uLog::microLog_ofs
+            #define uLOG_INIT_0                          \
+                namespace uLog {                         \
+                int minLogLevel = MICRO_LOG_MIN_LEVEL;   \
+                int loggerStatus = 0;                    \
+                std::string logFilename;                 \
+                std::ofstream microLog_ofs;              \
+                }
         #endif
 
         // microLog start:
 
-        #define uLOG_START(logFilename_)            \
-            uLog::logFilename = logFilename_;       \
-            uLog::loggerStatus = 0;                 \
-            microLog_ofs.open(logFilename);         \
-            if(!microLog_ofs) {                     \
-                uLog::loggerStatus = -1;            \
+        #define uLOG_START(logFilename_)                  \
+            uLog::logFilename = logFilename_;             \
+            uLog::loggerStatus = 0;                       \
+            uLog::microLog_ofs.open(uLog::logFilename);   \
+            if(!uLog::microLog_ofs) {                     \
+                uLog::loggerStatus = -1;                  \
                 std::cerr << "Error opening log file. Cannot produce logs. Check if disk space is available." << std::endl;  \
             }
 
-        #define uLOG_START_APP(logFilename_)                        \
-            uLog::logFilename = logFilename_;                       \
-            uLog::loggerStatus = 0;                                 \
-            microLog_ofs.open(logFilename, std::fstream::app);      \
-            if(!microLog_ofs) {                                     \
-                uLog::loggerStatus = -1;                            \
+        #define uLOG_START_APP(logFilename_)                                \
+            uLog::logFilename = logFilename_;                               \
+            uLog::loggerStatus = 0;                                         \
+            uLog::microLog_ofs.open(uLog::logFilename, std::fstream::app);  \
+            if(!uLog::microLog_ofs) {                                       \
+                uLog::loggerStatus = -1;                                    \
                 std::cerr << "Error opening log file. Cannot produce logs. Check if disk space is available." << std::endl;  \
             }
 
@@ -391,12 +394,12 @@ namespace uLog {
             return true;
         }
 
-        inline bool CheckAvailableSpace()
+        inline bool CheckAvailableSpace(const std::string &logfname)
             // Check if the next log message can fit in the remaining available space
         {
         #if(MICRO_LOG_BOOST == 1)
             boost::system::error_code errCode;
-            boost::filesystem::space_info space = boost::filesystem::space(uLog::logFilename, errCode);
+            boost::filesystem::space_info space = boost::filesystem::space(logfname, errCode);
             if(space.available < maxLogSize) {
                 std::cerr << "Logger error: not enough space available in the current partition (" << space.available << " bytes)." << std::endl;
                 return false;
@@ -404,6 +407,13 @@ namespace uLog {
         #endif
             return true;
         }
+
+        inline bool CheckAvailableSpace()
+            // Check if the next log message can fit in the remaining available space
+        {
+            return CheckAvailableSpace(uLog::logFilename);
+        }
+
 
         inline std::string LogTime() {
             float t = float(std::clock())/CLOCKS_PER_SEC;
@@ -452,93 +462,100 @@ namespace uLog {
         }
 
 
-        #define uLOGS_(logstream, level, localMinLevel)                         \
-            if(CheckLogLevel(level, localMinLevel) && CheckAvailableSpace())    \
-                MICRO_LOG_LOCK;                                                 \
-                logstream                                                       \
-                    << (LogFields::time?LogTime():"")                           \
-                    << (LogFields::date?LogDate():"")                           \
-                    << (LogFields::llevel?logLevelTags[level]:"")               \
-                    << (LogFields::llevel?uLog::separator:"")                   \
-                    << (LogFields::exec?MICRO_LOG_EXECUTABLE_NAME:"")           \
-                    << (LogFields::exec?uLog::separator:"")                     \
-                    << (LogFields::pid?GetPID():"")                             \
-                    << (LogFields::pid?uLog::separator:"")                      \
-                    << (LogFields::uid?GetUID():"")                             \
-                    << (LogFields::uid?uLog::separator:"")                      \
-                    << (LogFields::uname?GetUserName():"")                      \
-                    << (LogFields::uname?uLog::separator:"")                    \
-                    << (LogFields::fileName?(strrchr(__FILE__, MICRO_LOG_DIR_SLASH) ? strrchr(__FILE__, MICRO_LOG_DIR_SLASH) + 1 : __FILE__):"")  \
-                    << (LogFields::fileName?uLog::separator:"")                 \
-                    << (LogFields::filePath?__FILE__:"")                        \
-                    << (LogFields::filePath?uLog::separator:"")                 \
-                    << (LogFields::funcName?__func__:"")                        \
-                    << (LogFields::funcName?uLog::separator:"")                 \
-                    << (LogFields::funcSig?__PRETTY_FUNCTION__:"")              \
-                    << (LogFields::funcSig?uLog::separator:"")                  \
-                    << (LogFields::line?std::to_string(__LINE__):"")            \
-                    << (LogFields::line?uLog::separator:"")                     \
+        #define uLOGS_(logstream, level, localMinLevel)                               \
+            if(uLog::CheckLogLevel(level, localMinLevel) && uLog::CheckAvailableSpace())    \
+                MICRO_LOG_LOCK;                                                       \
+                logstream                                                             \
+                    << (uLog::LogFields::time?uLog::LogTime():"")                     \
+                    << (uLog::LogFields::date?uLog::LogDate():"")                     \
+                    << (uLog::LogFields::llevel?uLog::logLevelTags[level]:"")         \
+                    << (uLog::LogFields::llevel?uLog::separator:"")                   \
+                    << (uLog::LogFields::exec?MICRO_LOG_EXECUTABLE_NAME:"")           \
+                    << (uLog::LogFields::exec?uLog::separator:"")                     \
+                    << (uLog::LogFields::pid?uLog::GetPID():"")                       \
+                    << (uLog::LogFields::pid?uLog::separator:"")                      \
+                    << (uLog::LogFields::uid?uLog::GetUID():"")                       \
+                    << (uLog::LogFields::uid?uLog::separator:"")                      \
+                    << (uLog::LogFields::uname?uLog::GetUserName():"")                \
+                    << (uLog::LogFields::uname?uLog::separator:"")                    \
+                    << (uLog::LogFields::fileName?(strrchr(__FILE__, MICRO_LOG_DIR_SLASH) ? strrchr(__FILE__, MICRO_LOG_DIR_SLASH) + 1 : __FILE__):"")  \
+                    << (uLog::LogFields::fileName?uLog::separator:"")                 \
+                    << (uLog::LogFields::filePath?__FILE__:"")                        \
+                    << (uLog::LogFields::filePath?uLog::separator:"")                 \
+                    << (uLog::LogFields::funcName?__func__:"")                        \
+                    << (uLog::LogFields::funcName?uLog::separator:"")                 \
+                    << (uLog::LogFields::funcSig?__PRETTY_FUNCTION__:"")              \
+                    << (uLog::LogFields::funcSig?uLog::separator:"")                  \
+                    << (uLog::LogFields::line?std::to_string(__LINE__):"")            \
+                    << (uLog::LogFields::line?uLog::separator:"")                     \
                     << ": "
 
         #define uLOGS(logstream, level)  uLOGS_(logstream, level, nolog)
 
-        #define uLOG_(level, localMinLevel)  uLOGS_(microLog_ofs, level, localMinLevel)
+        #define uLOG_(level, localMinLevel)  uLOGS_(uLog::microLog_ofs, level, localMinLevel)
 
-        #define uLOG(level)  uLOGS_(microLog_ofs, level, nolog)
+        #define uLOG(level)  uLOGS_(uLog::microLog_ofs, level, nolog)
 
+        #define uLOGF(logfname, level, minLogLev, logMsg) {                           \
+            if(level >= minLogLev && uLog::CheckAvailableSpace(logfname)) {           \
+                std::ofstream ofs(logfname, std::fstream::app);                       \
+                ofs << uLog::logLevelTags[level] << " " << logMsg << std::endl;       \
+            }                                                                         \
+        }
 
-        #define uLOG_TITLES_S(logstream, level)                                 \
-            if(CheckLogLevel(level))                                            \
-                MICRO_LOG_LOCK;                                                 \
-                logstream                                                       \
-                    << bar << "\n"                                              \
-                    << (LogFields::time?"Time  \t":"")                          \
-                    << (LogFields::date?"Date  \t":"")                          \
-                    << (LogFields::llevel?"Level  \t":"")                       \
-                    << (LogFields::exec?"Executable  \t":"")                    \
-                    << (LogFields::pid?"PID  \t":"")                            \
-                    << (LogFields::uid?"UID  \t":"")                            \
-                    << (LogFields::uname?"User  \t":"")                         \
-                    << (LogFields::fileName?"Filename  \t":"")                  \
-                    << (LogFields::filePath?"Filepath  \t":"")                  \
-                    << (LogFields::funcName?"Function  \t":"")                  \
-                    << (LogFields::funcSig?"Function_signature  \t":"")         \
-                    << (LogFields::line?"Line  \t":"")                          \
-                    << "Log"                                                    \
-                    << "\n" << bar << endm;                                     \
+        #define uLOG_TITLES_S(logstream, level)                                       \
+            if(uLog::CheckLogLevel(level))                                            \
+                MICRO_LOG_LOCK;                                                       \
+                logstream                                                             \
+                    << uLog::bar << "\n"                                              \
+                    << (uLog::LogFields::time?"Time  \t":"")                          \
+                    << (uLog::LogFields::date?"Date  \t":"")                          \
+                    << (uLog::LogFields::llevel?"Level  \t":"")                       \
+                    << (uLog::LogFields::exec?"Executable  \t":"")                    \
+                    << (uLog::LogFields::pid?"PID  \t":"")                            \
+                    << (uLog::LogFields::uid?"UID  \t":"")                            \
+                    << (uLog::LogFields::uname?"User  \t":"")                         \
+                    << (uLog::LogFields::fileName?"Filename  \t":"")                  \
+                    << (uLog::LogFields::filePath?"Filepath  \t":"")                  \
+                    << (uLog::LogFields::funcName?"Function  \t":"")                  \
+                    << (uLog::LogFields::funcSig?"Function_signature  \t":"")         \
+                    << (uLog::LogFields::line?"Line  \t":"")                          \
+                    << "Log"                                                          \
+                    << "\n" << uLog::bar << uLog::endm;                               \
                 MICRO_LOG_UNLOCK
 
-        #define uLOG_TITLES(level)  uLOG_TITLES_S(microLog_ofs, level)
+        #define uLOG_TITLES(level)  uLOG_TITLES_S(uLog::microLog_ofs, level)
 
 
         // uLOG log terminator
-        #define uLOGE endm; MICRO_LOG_UNLOCK
+        #define uLOGE uLog::endm; MICRO_LOG_UNLOCK
 
 		#define uLOGT(level) \
-			if(CheckLogLevel(level)) \
-				microLog_ofs
+            if(uLog::CheckLogLevel(level)) \
+                uLog::microLog_ofs
 
         #define uLOG_DATE \
-			if(std::time(&microLog_time)) \
-                microLog_ofs << "\nDate: " << std::ctime(&microLog_time)
+            if(std::time(&uLog::microLog_time)) \
+                uLog::microLog_ofs << "\nDate: " << std::ctime(&uLog::microLog_time)
 
 		#define uLOGD(level) \
-			if(std::time(&microLog_time), CheckLogLevel(level)) \
-                microLog_ofs << "\nDate: " << std::ctime(&microLog_time)
+            if(std::time(&uLog::microLog_time), uLog::CheckLogLevel(level)) \
+                uLog::microLog_ofs << "\nDate: " << std::ctime(&uLog::microLog_time)
 
 		#define uLOGB(level) \
-			if(CheckLogLevel(level)) \
-                microLog_ofs << bar << endm
+            if(uLog::CheckLogLevel(level)) \
+                uLog::microLog_ofs << bar << uLog::endm
 
         #ifndef MICRO_LOG_DLL
         void LogLevels() {
-            microLog_ofs << "Log levels: ";
-            for(size_t i = 0; i < nLogLevels; ++i) microLog_ofs << logLevelTags[i] << " ";
-            microLog_ofs << std::endl;
+            uLog::microLog_ofs << "Log levels: ";
+            for(size_t i = 0; i < uLog::nLogLevels; ++i)
+                uLog::microLog_ofs << uLog::logLevelTags[i] << " ";
+            uLog::microLog_ofs << std::endl;
         }
 
         void MinLogLevel() {
-            microLog_ofs << "Minimum log level to be logged: " << logLevelTags[minLogLevel] << std::endl;
+            uLog::microLog_ofs << "Minimum log level to be logged: " << uLog::logLevelTags[uLog::minLogLevel] << std::endl;
         }
 
         void Statistics::Update(int level) {

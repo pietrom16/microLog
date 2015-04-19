@@ -89,6 +89,9 @@ int Test_microLog(std::string logPath, int nTestCases = 1)
         // Test with custom log file
         uLOG_TITLES_S(custom_ofs, warning);
         uLOGS(custom_ofs, warning) << "Test log on a different file." << uLOGE;
+
+        // Test without logger initialization
+        uLOGF(logPath, warning, info, "Test without logger initialization.");
     }
 
     return 0;
