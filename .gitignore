@@ -194,3 +194,4 @@ src/logger/g3log/g2log-FATAL-contract
 src/logger/g3log/g2log-FATAL-sigsegv
 teamworkUser*.xml
 Phoenix.vpp.working*
+CMakeLists.txt.user.*
