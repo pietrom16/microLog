@@ -79,7 +79,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef MICRO_LOG_HPP
 #define MICRO_LOG_HPP
 
-#define MICRO_LOG_VERSION "7.1.0"
+#define MICRO_LOG_VERSION "7.1.1"
 
 // Standard threading libraries
 #define MICRO_LOG_SINGLE_THREAD  1
@@ -555,18 +555,18 @@ namespace uLog {
                 uLog::microLog_ofs << bar << uLog::endm
 
         #ifndef MICRO_LOG_DLL
-        void LogLevels() {
+        inline void LogLevels() {
             uLog::microLog_ofs << "Log levels: ";
             for(size_t i = 0; i < uLog::nLogLevels; ++i)
                 uLog::microLog_ofs << uLog::logLevelTags[i] << " ";
             uLog::microLog_ofs << std::endl;
         }
 
-        void MinLogLevel() {
+        inline void MinLogLevel() {
             uLog::microLog_ofs << "Minimum log level to be logged: " << uLog::logLevelTags[uLog::minLogLevel] << std::endl;
         }
 
-        void Statistics::Update(int level) {
+        inline void Statistics::Update(int level) {
             ++nLogs;
             if(level > highestLevel) highestLevel = level;
             switch (level) {
@@ -581,7 +581,7 @@ namespace uLog {
             }
         }
 
-        void Statistics::Log() {
+        inline void Statistics::Log() {
             microLog_ofs << "Log statistics:"
                 << "\n\tNumber of logs: " << nLogs
                 << "\n\tNumber of 'fatal' logs:    " << nFatalLogs
@@ -655,10 +655,10 @@ namespace uLog {
         #define uLOG_LEVEL                   if(0) microLog_ofs
 
         #ifndef MICRO_LOG_DLL
-        void LogLevels() {}
-        void MinLogLevel() {}
-        void Statistics::Update(int level) {}
-        void Statistics::Log() {}
+        inline void LogLevels() {}
+        inline void MinLogLevel() {}
+        inline void Statistics::Update(int level) {}
+        inline void Statistics::Log() {}
         #endif
 
 	#endif // MICRO_LOG_ACTIVE
