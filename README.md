@@ -1,6 +1,6 @@
 # microLog
 
-#### - Single header logger (27 KB only).
+#### - Single header logger (28 KB only).
 #### - Three log level thresholds, to tune verbosity on a global and local level.
 
 Distinctive features:
