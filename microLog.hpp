@@ -158,6 +158,7 @@ namespace uLog {
 	extern int minLogLevel;                  // minimum level a message must have to be logged
 	extern int loggerStatus;                 // OK=0, error otherwise
 	extern std::string logFilename;
+	extern std::string backupPath;
 
 	static const size_t maxLogSize = 1024;      // max length of a log message (bytes)
 
@@ -607,6 +608,45 @@ namespace uLog {
 
 		#endif // MICRO_LOG_DLL
 
+		//+H+ //+TODO+
+		static const int
+		    backup_store_local  = 0,
+		    backup_store_remote = 1,
+		    backup_append       = 2,
+		    backup_overwrite    = 3;
+
+		static const int backup_ok           = 0,
+		                 backup_no_file      = 2,
+		                 backup_nothing_todo = 3,
+		                 backup_error        = -1;
+
+		//+TODO - Call it
+		inline int BackupPrevLog(const std::string &logFilename, int mode = backup_append)
+		{
+			if(mode == backup_append)
+				return backup_nothing_todo;
+
+			std::ifstream ifs(logFilename);
+			if(!ifs)
+				return backup_no_file;
+
+			if(mode == backup_overwrite) {
+				std::remove(logFilename.c_str());
+				return backup_ok;
+			}
+			else if(mode == backup_store_local) {
+				const std::string bufn = logFilename.c_str() + std::string("_backup"); //+TODO - timestamp
+				std::rename(logFilename.c_str(), bufn.c_str());
+				return backup_ok;
+			}
+			else if(mode == backup_store_remote) {
+				const std::string bufn = backupPath + logFilename.c_str() + std::string("_backup"); //+TODO - timestamp
+				std::rename(logFilename.c_str(), bufn.c_str());
+				return backup_ok;
+			}
+
+			return backup_nothing_todo;
+		}
 
 #else // MICRO_LOG_ACTIVE
 
