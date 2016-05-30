@@ -281,10 +281,11 @@ namespace uLog {
 
 		// microLog start:
 
+		//+B Linker error: uLog::BackupPrevLog(backup_mode);
         #define uLOG_START(logFilename_, backup_mode)                          \
 	        uLog::logFilename = logFilename_;                                  \
 	        uLog::loggerStatus = 0;                                            \
-	        BackupPrevLog(backup_mode);                                        \
+	        uLog::BackupPrevLog(backup_mode);                                  \
 	        uLog::microLog_ofs.open(uLog::logFilename, std::fstream::app);     \
 	        if(!uLog::microLog_ofs) {                                          \
 	            uLog::loggerStatus = -1;                                       \
@@ -626,12 +627,12 @@ namespace uLog {
 				return backup_ok;
 			}
 			else if(mode == backup_store_local) {
-				const std::string bufn = logFilename.c_str() + std::string("_backup"); //+TODO - timestamp
+				const std::string bufn = logFilename.c_str() + std::string("_backup") + LogDate() + std::string("_") + LogTime();
 				std::rename(logFilename.c_str(), bufn.c_str());
 				return backup_ok;
 			}
 			else if(mode == backup_store_remote) {
-				const std::string bufn = backupPath + logFilename.c_str() + std::string("_backup"); //+TODO - timestamp
+				const std::string bufn = backupPath + logFilename.c_str() + std::string("_backup") + LogDate() + std::string("_") + LogTime();
 				std::rename(logFilename.c_str(), bufn.c_str());  //+ Check if a rename is enough to move to remote storage
 				return backup_ok;
 			}
