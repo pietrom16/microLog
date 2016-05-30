@@ -704,6 +704,8 @@ namespace uLog {
 		inline void Statistics::Log() {}
 		#endif
 
+		inline int BackupPrevLog(int mode, const std::string &backupPath) { return 0; }
+
 	#endif // MICRO_LOG_ACTIVE
 
 
