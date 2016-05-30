@@ -291,15 +291,6 @@ namespace uLog {
 	            std::cerr << "Error opening log file. Cannot produce logs. Check if disk space is available." << std::endl;  \
 			}
 
-		#define uLOG_START_APP(logFilename_)                                \
-			uLog::logFilename = logFilename_;                               \
-			uLog::loggerStatus = 0;                                         \
-			uLog::microLog_ofs.open(uLog::logFilename, std::fstream::app);  \
-			if(!uLog::microLog_ofs) {                                       \
-				uLog::loggerStatus = -1;                                    \
-				std::cerr << "Error opening log file. Cannot produce logs. Check if disk space is available." << std::endl;  \
-			}
-
 		// Multithreading: macros used to define a critical section
 		//                 according to the adopted threading library:
 
