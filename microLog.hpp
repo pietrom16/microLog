@@ -284,7 +284,7 @@ namespace uLog {
         #define uLOG_START(logFilename_, backup_mode)       \
 	        uLog::logFilename = logFilename_;               \
 	        uLog::loggerStatus = 0;                         \
-	        BackupPrevLog(logFilename_, backup_mode);       \
+	        BackupPrevLog(backup_mode);                     \
 	        uLog::microLog_ofs.open(uLog::logFilename);     \
 	        if(!uLog::microLog_ofs) {                       \
 	            uLog::loggerStatus = -1;                    \
@@ -622,7 +622,7 @@ namespace uLog {
 		                 backup_error        = -1;
 
 		//+TODO - Call it
-		inline int BackupPrevLog(const std::string &logFilename, int mode = backup_append)
+		inline int BackupPrevLog(int mode = backup_append)
 		{
 			if(mode == backup_append)
 				return backup_nothing_todo;		//+TODO - Return std::fstream::app
