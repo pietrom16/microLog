@@ -11,33 +11,39 @@
 #ifndef MICRO_LOG_CONFIG_HPP
 #define	MICRO_LOG_CONFIG_HPP
 
-#define MICRO_LOG_ACTIVE
+#ifndef MICRO_LOG_ACTIVE
+    #define MICRO_LOG_ACTIVE
+#endif
 
-// Minimum log levels for specific code areas:
+// Default minimum log level:
 
 #ifndef MICRO_LOG_MIN_LEVEL
     #define MICRO_LOG_MIN_LEVEL nolog
 #endif
 
-#define MICRO_LOG_LEVEL1 warning
-#define MICRO_LOG_LEVEL2 detail
+// Minimum log levels for specific code areas:
 
 namespace uLog {
     static const int
-        logConstLevel1 = warning,
-        logConstLevel2 = detail,
-        logGPSolver = detail,
-        logQSExperiment = info,
-        logQSSolverForCompleteCarModel = detail,
-        logRootNewton = info,
-        logInfo = nolog;
-    static int
-        logLevelVar = detail;
-    static const char separator[] = "\t";
+		logHighLevel = detail,
+		logMountDisk = detail,
+		logProcess = detail,
+		logUnitTests = detail,
+		logInfo = detail;
+	static const char separator[] = "  ";
 }
 
+#ifndef MICRO_LOG_DETAIL
+    #define MICRO_LOG_DETAIL 2
+#endif
+
+#ifndef MICRO_LOG_FILE_NAME
+	// Set the log file name at run time
+    //#define MICRO_LOG_FILE_NAME "default.log"
+#endif
+
 #ifndef MICRO_LOG_EXECUTABLE_NAME
-    #define MICRO_LOG_EXECUTABLE_NAME ""
+	#define MICRO_LOG_EXECUTABLE_NAME "Phoenix"
 #endif
 
 /// Specify one threading library to be used
@@ -50,7 +56,9 @@ namespace uLog {
 
 /// Set this if the logger is in a DLL (to avoid static variables)
 #ifdef WIN32
-    #define MICRO_LOG_DLL
+	#ifdef LOGGER_IN_DLL
+		#define MICRO_LOG_DLL
+	#endif
 #endif
 
 
