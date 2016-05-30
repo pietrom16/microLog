@@ -158,9 +158,21 @@ namespace uLog {
 	extern int minLogLevel;                  // minimum level a message must have to be logged
 	extern int loggerStatus;                 // OK=0, error otherwise
 	extern std::string logFilename;
-	extern std::string backupPath;
 
 	static const size_t maxLogSize = 1024;      // max length of a log message (bytes)
+
+	static const int
+	    backup_store_local  = 0,
+	    backup_store_remote = 1,
+	    backup_append       = 2,
+	    backup_overwrite    = 3;
+
+	static const int backup_ok           = 0,
+	                 backup_no_file      = 2,
+	                 backup_nothing_todo = 3,
+	                 backup_error        = -1;
+
+	inline int BackupPrevLog(int mode = backup_append, const std::string &backupPath = std::string());
 
 	// Run time fields selection
 
@@ -281,7 +293,6 @@ namespace uLog {
 
 		// microLog start:
 
-		//+B Linker error: uLog::BackupPrevLog(backup_mode);
         #define uLOG_START(logFilename_, backup_mode)                          \
 	        uLog::logFilename = logFilename_;                                  \
 	        uLog::loggerStatus = 0;                                            \
@@ -601,19 +612,7 @@ namespace uLog {
 
 		#endif // MICRO_LOG_DLL
 
-		//+H+ //+TODO+
-		static const int
-		    backup_store_local  = 0,
-		    backup_store_remote = 1,
-		    backup_append       = 2,
-		    backup_overwrite    = 3;
-
-		static const int backup_ok           = 0,
-		                 backup_no_file      = 2,
-		                 backup_nothing_todo = 3,
-		                 backup_error        = -1;
-
-		inline int BackupPrevLog(int mode = backup_append)
+		inline int BackupPrevLog(int mode, const std::string &backupPath)
 		{
 			if(mode == backup_append)
 				return backup_nothing_todo;
