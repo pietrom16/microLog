@@ -281,13 +281,14 @@ namespace uLog {
 
 		// microLog start:
 
-		#define uLOG_START(logFilename_)                  \
-			uLog::logFilename = logFilename_;             \
-			uLog::loggerStatus = 0;                       \
-			uLog::microLog_ofs.open(uLog::logFilename);   \
-			if(!uLog::microLog_ofs) {                     \
-				uLog::loggerStatus = -1;                  \
-				std::cerr << "Error opening log file. Cannot produce logs. Check if disk space is available." << std::endl;  \
+        #define uLOG_START(logFilename_, backup_mode)       \
+	        uLog::logFilename = logFilename_;               \
+	        uLog::loggerStatus = 0;                         \
+	        BackupPrevLog(logFilename_, backup_mode);       \
+	        uLog::microLog_ofs.open(uLog::logFilename);     \
+	        if(!uLog::microLog_ofs) {                       \
+	            uLog::loggerStatus = -1;                    \
+	            std::cerr << "Error opening log file. Cannot produce logs. Check if disk space is available." << std::endl;  \
 			}
 
 		#define uLOG_START_APP(logFilename_)                                \
@@ -624,7 +625,7 @@ namespace uLog {
 		inline int BackupPrevLog(const std::string &logFilename, int mode = backup_append)
 		{
 			if(mode == backup_append)
-				return backup_nothing_todo;
+				return backup_nothing_todo;		//+TODO - Return std::fstream::app
 
 			std::ifstream ifs(logFilename);
 			if(!ifs)
