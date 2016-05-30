@@ -281,13 +281,13 @@ namespace uLog {
 
 		// microLog start:
 
-        #define uLOG_START(logFilename_, backup_mode)       \
-	        uLog::logFilename = logFilename_;               \
-	        uLog::loggerStatus = 0;                         \
-	        BackupPrevLog(backup_mode);                     \
-	        uLog::microLog_ofs.open(uLog::logFilename);     \
-	        if(!uLog::microLog_ofs) {                       \
-	            uLog::loggerStatus = -1;                    \
+        #define uLOG_START(logFilename_, backup_mode)                          \
+	        uLog::logFilename = logFilename_;                                  \
+	        uLog::loggerStatus = 0;                                            \
+	        BackupPrevLog(backup_mode);                                        \
+	        uLog::microLog_ofs.open(uLog::logFilename, std::fstream::app);     \
+	        if(!uLog::microLog_ofs) {                                          \
+	            uLog::loggerStatus = -1;                                       \
 	            std::cerr << "Error opening log file. Cannot produce logs. Check if disk space is available." << std::endl;  \
 			}
 
@@ -621,11 +621,10 @@ namespace uLog {
 		                 backup_nothing_todo = 3,
 		                 backup_error        = -1;
 
-		//+TODO - Call it
 		inline int BackupPrevLog(int mode = backup_append)
 		{
 			if(mode == backup_append)
-				return backup_nothing_todo;		//+TODO - Return std::fstream::app
+				return backup_nothing_todo;
 
 			std::ifstream ifs(logFilename);
 			if(!ifs)
@@ -642,7 +641,7 @@ namespace uLog {
 			}
 			else if(mode == backup_store_remote) {
 				const std::string bufn = backupPath + logFilename.c_str() + std::string("_backup"); //+TODO - timestamp
-				std::rename(logFilename.c_str(), bufn.c_str());
+				std::rename(logFilename.c_str(), bufn.c_str());  //+ Check if a rename is enough to move to remote storage
 				return backup_ok;
 			}
 
