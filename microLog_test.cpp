@@ -40,7 +40,7 @@ int Test_microLog(std::string logPath, int nTestCases = 1)
 
 uLOG_INIT;     // microLog initialization
 
-int Test_microLog(std::string logPath, int nTestCases = 1)
+int Test_microLog(std::string logPath, size_t nTestCases = 1)
 {
 	/// Tests:
 	// - Plain tests
@@ -53,7 +53,7 @@ int Test_microLog(std::string logPath, int nTestCases = 1)
 
 	///--- TEST INIT ---
 
-	uLOG_START_APP(logPath);
+	uLOG_START(logPath, uLog::backup_append);
 
 	// Test with custom log file
 	std::ofstream custom_ofs("/Volumes/ramdisk/custom.log");
@@ -74,7 +74,7 @@ int Test_microLog(std::string logPath, int nTestCases = 1)
 
 		uLog::minLogLevel = nolog;
 
-		for(size_t l = nolog; l <= fatal; ++l)
+		for(int l = nolog; l <= fatal; ++l)
 		{
 			uLOG(l) << "Test log message with level " << l + 1 << "." << uLOGE;
 		}
@@ -84,19 +84,16 @@ int Test_microLog(std::string logPath, int nTestCases = 1)
 		uLog::minLogLevel = warning;
 
 		uLOG(detail) << "Log not generated, since below the minimum log level." << uLOGE;
+		uLOG(warning) << "Previous log not generated, since below the minimum log level." << uLOGE;
 		uLOG(warning) << "Log generated, since above the minimum log level." << uLOGE;
 
 		uLog::minLogLevel = warning;
-		uLog::logLevelVar = warning;
 		uLOG_(detail, MICRO_LOG_LEVEL1) << "Test minimum log levels for specific code areas with macros: not generated." << uLOGE;
 		uLOG_(detail, uLog::logConstLevel1) << "Test minimum log levels for specific code areas with constants: not generated." << uLOGE;
-		uLOG_(detail, uLog::logLevelVar) << "Test minimum log levels for specific code areas with variables: not generated." << uLOGE;
 
 		uLog::minLogLevel = warning;
-		uLog::logLevelVar = detail;
 		uLOG_(detail, MICRO_LOG_LEVEL2) << "Test minimum log levels for specific code areas with macros." << uLOGE;
 		uLOG_(detail, uLog::logConstLevel2) << "Test minimum log levels for specific code areas with constants." << uLOGE;
-		uLOG_(detail, uLog::logLevelVar) << "Test minimum log levels for specific code areas with variables." << uLOGE;
 
 		/*
 		//+TODO

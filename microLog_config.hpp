@@ -1,7 +1,7 @@
 /* 
  * File:   microLog_config.hpp
  *
- * Configuration of the microLog logger.
+ * Example configuration of the microLog logger.
  * Use this file to set the parameters related to the logger.
  * These macros can be defined in the makefile/build system.
  * 
@@ -26,12 +26,20 @@
 namespace uLog {
     static const int
 		logHighLevel = detail,
-		logMountDisk = detail,
+	    logMountDisk = warning,
 		logProcess = detail,
 		logUnitTests = detail,
 		logInfo = detail;
+
+	static const int
+	    logConstLevel1 = detail,
+	    logConstLevel2 = warning;
+
 	static const char separator[] = "  ";
 }
+
+#define MICRO_LOG_LEVEL1 warning
+#define MICRO_LOG_LEVEL2 detail
 
 #ifndef MICRO_LOG_DETAIL
     #define MICRO_LOG_DETAIL 2
