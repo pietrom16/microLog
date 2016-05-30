@@ -104,6 +104,7 @@ namespace uLog {
 	#include <cstdio>
 	#include <cstring>
 	#include <ctime>
+    //+C++17 #include <filesystem>
 	#include <fstream>
 	#include <iomanip>
 	#include <iostream>
@@ -627,12 +628,14 @@ namespace uLog {
 			}
 			else if(mode == backup_store_local) {
 				//+TODO - Append the date of the log file, not the current date
+				//+C++17 auto ftime = std::filesystem::last_write_time(logFilename);
+				//+C++17 const std::string bufn = logFilename.c_str() + std::string("_backup") + ftime;
 				const std::string bufn = logFilename.c_str() + std::string("_backup") + LogDate() + std::string("_") + LogTime();
 				std::rename(logFilename.c_str(), bufn.c_str());
 				return backup_ok;
 			}
 			else if(mode == backup_store_remote) {
-				//+TODO - Append the date of the log file, not the current date
+				//+TODO - see previous code block
 				const std::string bufn = backupPath + logFilename.c_str() + std::string("_backup") + LogDate() + std::string("_") + LogTime();
 				std::rename(logFilename.c_str(), bufn.c_str());  //+ Check if a rename is enough to move to remote storage
 				return backup_ok;
