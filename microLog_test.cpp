@@ -76,35 +76,35 @@ int Test_microLog(std::string logPath, size_t nTestCases = 1)
 
 		for(int l = nolog; l <= fatal; ++l)
 		{
-			uLOG(l) << "Test log message with level " << l + 1 << "." << uLOGE;
+			uLOG(l) << "Test log message with level " << l + 1 << ".";
 		}
 
-		uLOG(info) << "Test insertion operator: " << char((n + 65)%255) << " " << n << " " << sin(n + 1.0) << uLOGE;
+		uLOG(info) << "Test insertion operator: " << char((n + 65)%255) << " " << n << " " << sin(n + 1.0);
 
 		uLog::minLogLevel = warning;
 
-		uLOG(detail) << "Log not generated, since below the minimum log level." << uLOGE;
-		uLOG(warning) << "Previous log not generated, since below the minimum log level." << uLOGE;
-		uLOG(warning) << "Log generated, since above the minimum log level." << uLOGE;
+		uLOG(detail) << "Log not generated, since below the minimum log level.";
+		uLOG(warning) << "Previous log not generated, since below the minimum log level.";
+		uLOG(warning) << "Log generated, since above the minimum log level.";
 
 		uLog::minLogLevel = warning;
-		uLOG_(detail, MICRO_LOG_LEVEL1) << "Test minimum log levels for specific code areas with macros: not generated." << uLOGE;
-		uLOG_(detail, uLog::logConstLevel1) << "Test minimum log levels for specific code areas with constants: not generated." << uLOGE;
+		uLOG_(detail, MICRO_LOG_LEVEL1) << "Test minimum log levels for specific code areas with macros: not generated.";
+		uLOG_(detail, uLog::logConstLevel1) << "Test minimum log levels for specific code areas with constants: not generated.";
 
 		uLog::minLogLevel = warning;
-		uLOG_(detail, MICRO_LOG_LEVEL2) << "Test minimum log levels for specific code areas with macros." << uLOGE;
-		uLOG_(detail, uLog::logConstLevel2) << "Test minimum log levels for specific code areas with constants." << uLOGE;
+		uLOG_(detail, MICRO_LOG_LEVEL2) << "Test minimum log levels for specific code areas with macros.";
+		uLOG_(detail, uLog::logConstLevel2) << "Test minimum log levels for specific code areas with constants.";
 
 		/*
 		//+TODO
 			uLOG(warning) << "Log made of separate tokens... ";
 			uLOGT(warning) << "first token, ";
-			uLOGT(warning) << "last token" << uLOGE;
+			uLOGT(warning) << "last token";
 		*/
 
 		// Test with custom log file
 		uLOG_TITLES_S(custom_ofs, warning);
-		uLOGS(custom_ofs, warning) << "Test log on a different file." << uLOGE;
+		uLOGS(custom_ofs, warning) << "Test log on a different file.";
 
 		// Test without logger initialization
 		uLOGF(logPath, warning, info, "Test without logger initialization.");

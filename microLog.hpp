@@ -299,6 +299,7 @@ namespace uLog {
 	        uLog::loggerStatus = 0;                                            \
 	        uLog::BackupPrevLog(backup_mode);                                  \
 	        uLog::microLog_ofs.open(uLog::logFilename, std::fstream::app);     \
+	        uLog::microLog_ofs << std::unitbuf; /* enable automatic flushing */ \
 	        if(!uLog::microLog_ofs) {                                          \
 	            uLog::loggerStatus = -1;                                       \
 	            std::cerr << "Error opening log file. Cannot produce logs. Check if disk space is available." << std::endl;  \
