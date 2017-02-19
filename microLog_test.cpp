@@ -76,7 +76,7 @@ int Test_microLog(std::string logPath, size_t nTestCases = 1)
 
 		for(int l = nolog; l <= fatal; ++l)
 		{
-			uLOG(l) << "Test log message with level " << l + 1 << ".";
+			uLOG(l) << "Test log message with level " << l + 1 << ".";	//+B+ uLOG contains {, so uLOGE, containing }, must be present
 		}
 
 		uLOG(info) << "Test insertion operator: " << char((n + 65)%255) << " " << n << " " << sin(n + 1.0);
