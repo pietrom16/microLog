@@ -76,6 +76,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		MICRO_LOG_MIN_LEVEL   to set a minimum log level below which the logger call will not be added.
 */
 
+//+TODO
+// - Try to avoid putting a log statement is a separate code block. This implies a macro terminator with a }.
+
 #ifndef MICRO_LOG_HPP
 #define MICRO_LOG_HPP
 
