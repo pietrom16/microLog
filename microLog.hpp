@@ -78,6 +78,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 //+TODO
 // - Try to avoid putting a log statement is a separate code block. This implies a macro terminator with a }.
+// - To reduce the number of flushes, write the log in a string[stream] first.
 
 #ifndef MICRO_LOG_HPP
 #define MICRO_LOG_HPP
