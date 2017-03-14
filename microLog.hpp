@@ -112,8 +112,9 @@ namespace uLog {
 	#include <fstream>
 	#include <iomanip>
 	#include <iostream>
-	#include <string>
-	#include <vector>
+    #include <sstream>
+    #include <string>
+    #include <vector>
 
 	#ifndef MICRO_LOG_EXECUTABLE_NAME
 		#define MICRO_LOG_EXECUTABLE_NAME ""
