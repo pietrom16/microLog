@@ -145,35 +145,68 @@ namespace uLog {
 
 namespace uLog {
 
-	struct Statistics
+    class  Log;
+	struct LogStatistics;
+	struct LogFields;
+
+
+	class Log
 	{
-		#ifndef MICRO_LOG_DLL
-		static int nLogs;
-		static int nNoLogs, nVerboseLogs, nDetailLogs, nInfoLogs, nWarningLogs, nErrorLogs, nCriticalLogs, nFatalLogs;
-		static int highestLevel;
-		#endif
-		static void Update(int level);
-		static void Log();
+	public:
+		Log(const uLogLevels level);
+
+		template<typename T>
+		Log& operator<<(T const& token)
+		{
+			ofs << token;
+			return *this;
+		}
+
+		~Log()
+		{
+			ofs << std::endl;
+		}
+
+		int BackupPrevLog(int mode = backup_append, const std::string &backupPath = std::string());
+
+	public:
+
+		static const int
+		        backup_store_local  = 0,
+		        backup_store_remote = 1,
+		        backup_append       = 2,
+		        backup_overwrite    = 3;
+
+		static const int
+		        backup_ok           = 0,
+		        backup_no_file      = 2,
+		        backup_nothing_todo = 3,
+		        backup_error        = -1;
+
+		static const size_t  maxLogSize = 1024;		// max length of a log message (bytes)
+
+	private:
+
+		static int            minLevel;		// minimum level a message must have to be logged
+		static int            status;		// OK=0, error otherwise
+		static std::string    filename;
+		static std::ofstream  ofs;
+		static LogStatistics  stats;
+
+
 	};
 
-	extern int minLogLevel;                  // minimum level a message must have to be logged
-	extern int loggerStatus;                 // OK=0, error otherwise
-	extern std::string logFilename;
 
-	static const size_t maxLogSize = 1024;      // max length of a log message (bytes)
+	struct LogStatistics
+	{
+		int nLogs;
+		int nNoLogs, nVerboseLogs, nDetailLogs, nInfoLogs, nWarningLogs, nErrorLogs, nCriticalLogs, nFatalLogs;
+		int highestLevel;
 
-	static const int
-	    backup_store_local  = 0,
-	    backup_store_remote = 1,
-	    backup_append       = 2,
-	    backup_overwrite    = 3;
+		void Update(int level);
+		void Log();
+	};
 
-	static const int backup_ok           = 0,
-	                 backup_no_file      = 2,
-	                 backup_nothing_todo = 3,
-	                 backup_error        = -1;
-
-	inline int BackupPrevLog(int mode = backup_append, const std::string &backupPath = std::string());
 
 	// Run time fields selection
 
