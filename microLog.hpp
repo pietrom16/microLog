@@ -158,13 +158,17 @@ namespace uLog {
 		template<typename T>
 		Log& operator<<(T const& token)
 		{
+            #ifdef MICRO_LOG_ACTIVE
 			ofs << token;
+            #endif
 			return *this;
 		}
 
 		~Log()
 		{
+            #ifdef MICRO_LOG_ACTIVE
 			ofs << std::endl;
+            #endif
 		}
 
 		int BackupPrevLog(int mode = backup_append, const std::string &backupPath = std::string());
