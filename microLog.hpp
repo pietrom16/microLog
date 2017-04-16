@@ -222,6 +222,8 @@ namespace uLog {
 		int nNoLogs, nVerboseLogs, nDetailLogs, nInfoLogs, nWarningLogs, nErrorLogs, nCriticalLogs, nFatalLogs;
 		int highestLevel;
 
+		LogStatistics() { Init(); }
+		void Init();
 		void Update(int level);
 		void Log();
 	};
@@ -632,6 +634,12 @@ namespace uLog {
 
 		inline void Log::MinLogLevel() const {
 			uLog::microLog_ofs << "Minimum log level to be logged: " << uLog::logLevelTags[minLevel] << std::endl;
+		}
+
+		inline void LogStatistics::Init() {
+			nLogs = 0;
+			nNoLogs = nVerboseLogs = nDetailLogs = nInfoLogs = nWarningLogs = nErrorLogs = nCriticalLogs = nFatalLogs = 0;
+			highestLevel = 0;
 		}
 
 		inline void LogStatistics::Update(int level) {
