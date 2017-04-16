@@ -325,12 +325,12 @@ namespace uLog {
 		#ifndef MICRO_LOG_DLL
 			#define uLOG_INIT_0                          \
 				namespace uLog {                         \
-				int minLogLevel = MICRO_LOG_MIN_LEVEL;   \
-				int loggerStatus = 0;                    \
-				std::string logFilename;                 \
-				std::ofstream microLog_ofs;              \
-				int Statistics::nLogs = 0, Statistics::nNoLogs = 0, Statistics::nVerboseLogs = 0, Statistics::nDetailLogs = 0, Statistics::nInfoLogs = 0, Statistics::nWarningLogs = 0, Statistics::nErrorLogs = 0, Statistics::nCriticalLogs = 0, Statistics::nFatalLogs = 0; \
-				int Statistics::highestLevel = 0;                                                                                       \
+	            int Log::minLevel = MICRO_LOG_MIN_LEVEL; \
+	            int Log::status = 0;                     \
+	            std::string Log::filename;               \
+	            std::ofstream Log::ofs;                  \
+	            LogStatistics Log::stats;                \
+	            Log::stats.Init();                       \
 				bool LogFields::time = false, LogFields::date = true, LogFields::llevel = true, LogFields::exec = false,                \
 					 LogFields::uid = false, LogFields::uname = false, LogFields::pid = false,                                          \
 					 LogFields::fileName = false, LogFields::filePath = false, LogFields::funcName = false, LogFields::funcSig = false, \
@@ -339,22 +339,23 @@ namespace uLog {
 		#else
 			#define uLOG_INIT_0                          \
 				namespace uLog {                         \
-				int minLogLevel = MICRO_LOG_MIN_LEVEL;   \
-				int loggerStatus = 0;                    \
-				std::string logFilename;                 \
-				std::ofstream microLog_ofs;              \
+	            int Log::minLevel = MICRO_LOG_MIN_LEVEL; \
+	            int Log::status = 0;                     \
+	            std::string Log::filename;               \
+	            std::ofstream Log::ofs;                  \
+	            LogStatistics Log::stats;                \
 				}
 		#endif
 
 		// microLog start:
 
         #define uLOG_START(logFilename_, backup_mode)                          \
-	        uLog::logFilename = logFilename_;                                  \
-	        uLog::loggerStatus = 0;                                            \
-	        uLog::BackupPrevLog(backup_mode);                                  \
+	        uLog::Log::filename = logFilename_;                                \
+	        uLog::Log::status = 0;                                             \
+	        uLog::Log::BackupPrevLog(backup_mode);                             \
 	        uLog::microLog_ofs.open(uLog::logFilename, std::fstream::app);     \
 	        if(!uLog::microLog_ofs) {                                          \
-	            uLog::loggerStatus = -1;                                       \
+	            uLog::Log::status = -1;                                        \
 	            std::cerr << "Error opening log file. Cannot produce logs. Check if disk space is available." << std::endl;  \
 			}
 
