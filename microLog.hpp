@@ -108,6 +108,7 @@ namespace uLog {
 	#include <fstream>
 	#include <iomanip>
 	#include <iostream>
+	#include <sstream>
 	#include <string>
 	#include <vector>
 
@@ -150,6 +151,8 @@ namespace uLog {
 	struct LogFields;
 
 
+	/// Log: the logger
+
 	class Log
 	{
 	public:
@@ -164,6 +167,17 @@ namespace uLog {
 			return *this;
 		}
 
+		//+TODO
+/*		template<typename T>
+		static Log& operator<<(Log&, T const& token)
+		{
+			static Log log;
+            #ifdef MICRO_LOG_ACTIVE
+			ofs << token;
+            #endif
+			return log;
+		}
+*/
 		~Log()
 		{
             #ifdef MICRO_LOG_ACTIVE
@@ -216,6 +230,8 @@ namespace uLog {
 	};
 
 
+	/// LogStatistics: statistical informations about generated logs
+
 	struct LogStatistics
 	{
 		int nLogs;
@@ -225,11 +241,11 @@ namespace uLog {
 		LogStatistics() { Init(); }
 		void Init();
 		void Update(int level);
-		void Log();
+		std::string Log();
 	};
 
 
-	// Run time fields selection
+	/// LogFields: switches to select logs fields
 
 	struct LogFields
 		/// Flags to enable/disable log message fields
@@ -294,6 +310,64 @@ namespace uLog {
 			log = true;
 		}
 	};
+
+} // uLog
+
+
+namespace uLog { // Implementation
+
+/// --- Log ---
+
+
+/// --- LogStatistics ---
+
+#ifndef MICRO_LOG_DLL
+
+inline void LogStatistics::Init() {
+	nLogs = 0;
+	nNoLogs = nVerboseLogs = nDetailLogs = nInfoLogs = nWarningLogs = nErrorLogs = nCriticalLogs = nFatalLogs = 0;
+	highestLevel = 0;
+}
+
+inline void LogStatistics::Update(int level) {
+	++nLogs;
+	if(level > highestLevel) highestLevel = level;
+	switch (level) {
+	case nolog:    ++nNoLogs;       break;
+	case verbose:  ++nVerboseLogs;  break;
+	case detail:   ++nDetailLogs;   break;
+	case info:     ++nInfoLogs;     break;
+	case warning:  ++nWarningLogs;  break;
+	case error:    ++nErrorLogs;    break;
+	case critical: ++nCriticalLogs; break;
+	case fatal:    ++nFatalLogs;    break;
+	}
+}
+
+inline std::string LogStatistics::Log()
+{
+	std::stringstream log;
+
+	log << "Log statistics:"
+		<< "\n\tNumber of logs: " << nLogs
+		<< "\n\tNumber of 'fatal' logs:    " << nFatalLogs
+		<< "\n\tNumber of 'critical' logs: " << nCriticalLogs
+		<< "\n\tNumber of 'error' logs:    " << nErrorLogs
+		<< "\n\tNumber of 'warning' logs:  " << nWarningLogs
+		<< "\n\tNumber of 'info' logs:     " << nInfoLogs
+		<< "\n\tNumber of 'detail' logs:   " << nDetailLogs
+		<< "\n\tNumber of 'verbose' logs:  " << nVerboseLogs
+		<< "\n\tNumber of 'null' logs:     " << nNoLogs << std::endl;
+	log << "Highest log level: " << highestLevel << std::endl;
+
+	return log.str();
+}
+
+#endif // MICRO_LOG_DLL
+
+
+
+} // uLog
 
 
 	#ifdef MICRO_LOG_ACTIVE
@@ -637,40 +711,6 @@ namespace uLog {
 			uLog::microLog_ofs << "Minimum log level to be logged: " << uLog::logLevelTags[minLevel] << std::endl;
 		}
 
-		inline void LogStatistics::Init() {
-			nLogs = 0;
-			nNoLogs = nVerboseLogs = nDetailLogs = nInfoLogs = nWarningLogs = nErrorLogs = nCriticalLogs = nFatalLogs = 0;
-			highestLevel = 0;
-		}
-
-		inline void LogStatistics::Update(int level) {
-			++nLogs;
-			if(level > highestLevel) highestLevel = level;
-			switch (level) {
-			case nolog:    ++nNoLogs;       break;
-			case verbose:  ++nVerboseLogs;  break;
-			case detail:   ++nDetailLogs;   break;
-			case info:     ++nInfoLogs;     break;
-			case warning:  ++nWarningLogs;  break;
-			case error:    ++nErrorLogs;    break;
-			case critical: ++nCriticalLogs; break;
-			case fatal:    ++nFatalLogs;    break;
-			}
-		}
-
-		inline void LogStatistics::Log() {
-			microLog_ofs << "Log statistics:"
-				<< "\n\tNumber of logs: " << nLogs
-				<< "\n\tNumber of 'fatal' logs:    " << nFatalLogs
-				<< "\n\tNumber of 'critical' logs: " << nCriticalLogs
-				<< "\n\tNumber of 'error' logs:    " << nErrorLogs
-				<< "\n\tNumber of 'warning' logs:  " << nWarningLogs
-				<< "\n\tNumber of 'info' logs:     " << nInfoLogs
-				<< "\n\tNumber of 'detail' logs:   " << nDetailLogs
-				<< "\n\tNumber of 'verbose' logs:  " << nVerboseLogs
-				<< "\n\tNumber of 'null' logs:     " << nNoLogs << std::endl;
-			microLog_ofs << "Highest log level: " << highestLevel << std::endl;
-		}
 
 		#endif // MICRO_LOG_DLL
 
