@@ -185,6 +185,7 @@ namespace uLog {
             #endif
 		}
 
+		void LogLevels();
 		void MinLogLevel() const;
 
 		int BackupPrevLog(int mode = backup_append, const std::string &backupPath = std::string());
@@ -217,7 +218,6 @@ namespace uLog {
 		std::string GetUID();
 		std::string GetUserName();
 
-
 	private:
 
 		static int            minLevel;		// minimum level a message must have to be logged
@@ -225,8 +225,6 @@ namespace uLog {
 		static std::string    filename;
 		static std::ofstream  ofs;
 		static LogStatistics  stats;
-
-
 	};
 
 
@@ -315,6 +313,139 @@ namespace uLog {
 
 
 namespace uLog { // Log implementation
+
+
+inline void Log::LogLevels() {
+	ofs << "Log levels: ";
+	for(size_t i = 0; i < uLog::nLogLevels; ++i)
+		ofs << uLog::logLevelTags[i] << " ";
+	ofs << std::endl;
+}
+
+inline void Log::MinLogLevel() const {
+	ofs << "Minimum log level to be logged: " << uLog::logLevelTags[minLevel] << std::endl;
+}
+
+inline int Log::BackupPrevLog(int mode, const std::string &backupPath)
+{
+	if(mode == backup_append)
+		return backup_nothing_todo;
+
+	std::ifstream ifs(filename);
+	if(!ifs)
+		return backup_no_file;
+
+	if(mode == backup_overwrite) {
+		std::remove(filename.c_str());
+		return backup_ok;
+	}
+	else if(mode == backup_store_local) {
+		//+TODO - Append the date of the log file, not the current date
+		//+C++17 auto ftime = std::filesystem::last_write_time(logFilename);
+		//+C++17 const std::string bufn = logFilename.c_str() + std::string("_backup") + ftime;
+		const std::string bufn = filename.c_str() + std::string("_backup") + LogDate() + std::string("_") + LogTime();
+		std::rename(filename.c_str(), bufn.c_str());
+		return backup_ok;
+	}
+	else if(mode == backup_store_remote) {
+		//+TODO - see previous code block
+		const std::string bufn = backupPath + filename.c_str() + std::string("_backup") + LogDate() + std::string("_") + LogTime();
+		std::rename(filename.c_str(), bufn.c_str());  //+ Check if a rename is enough to move to remote storage
+		return backup_ok;
+	}
+
+	return backup_nothing_todo;
+}
+
+
+inline bool Log::CheckLogLevel(int _level, int _localLevel)
+{
+	#ifndef MICRO_LOG_DLL
+	    stats.Update(_level);
+	#endif
+
+	if(status != 0) {        // cannot log if status is not clean
+		if(_level > error)
+			std::cerr << "Error " << status << ": logger disabled, and a critical error has been generated!" << std::endl;
+		return false;
+	}
+
+	if(_level < MICRO_LOG_MIN_LEVEL || _level < _localLevel)
+		return false;
+
+	if(_localLevel == nolog && _level < minLevel)
+		return false;
+
+	return true;
+}
+
+inline bool Log::CheckAvailableSpace(const std::string &logfname)
+	// Check if the next log message can fit in the remaining available space
+{
+#if(MICRO_LOG_BOOST == 1)
+	boost::system::error_code errCode;
+	boost::filesystem::space_info space = boost::filesystem::space(logfname, errCode);
+	if(space.available < maxLogSize) {
+		std::cerr << "Logger error: not enough space available in the current partition (" << space.available << " bytes)." << std::endl;
+		return false;
+	}
+#endif
+	return true;
+}
+
+inline bool Log::CheckAvailableSpace()
+	// Check if the next log message can fit in the remaining available space
+{
+	return CheckAvailableSpace(filename);
+}
+
+
+inline std::string Log::LogTime() {
+	float t = float(std::clock())/CLOCKS_PER_SEC;
+	const size_t sz = 16;
+	char ct[sz];
+	std::snprintf(ct, sz, "% 7.3f  ", t);
+	return std::string(ct);
+}
+
+inline std::string Log::LogDate() {
+	std::time_t t = std::time(nullptr);
+	char mbstr[32];
+	std::strftime(mbstr, sizeof(mbstr), "%F %T  ", std::localtime(&t));
+	return std::string(mbstr);
+}
+
+inline std::string Log::GetPID() {
+	#ifdef _POSIX_VERSION
+		return std::to_string(getpid());
+	#elif defined WIN32
+		return std::to_string(_getpid());
+	#else
+		return "?";
+	#endif
+}
+
+inline std::string Log::GetUID() {
+	#ifdef _POSIX_VERSION
+		return std::to_string(getuid());
+	#elif defined WIN32
+		return "?";
+	#else
+		return "?";
+	#endif
+}
+
+inline std::string Log::GetUserName() {
+	#ifdef _POSIX_VERSION
+		return getlogin();
+	#elif defined WIN32
+		GetUserName(username, UNLEN+1);
+		return username;
+	#else
+		return "?";
+	#endif
+}
+
 } // uLog
 
 
@@ -366,7 +497,7 @@ inline std::string LogStatistics::Log()
 
 } // uLog
 
-
+namespace uLog {
 	#ifdef MICRO_LOG_ACTIVE
 
 		// Begin: Platform specific
@@ -509,93 +640,6 @@ inline std::string LogStatistics::Log()
 			return os;
 		}
 
-		inline bool Log::CheckLogLevel(int _level, int _localLevel)
-		{
-			#ifndef MICRO_LOG_DLL
-			    stats.Update(_level);
-			#endif
-
-			if(status != 0) {        // cannot log if status is not clean
-				if(_level > error)
-					std::cerr << "Error " << status << ": logger disabled, and a critical error has been generated!" << std::endl;
-				return false;
-			}
-
-			if(_level < MICRO_LOG_MIN_LEVEL || _level < _localLevel)
-				return false;
-
-			if(_localLevel == nolog && _level < minLevel)
-				return false;
-
-			return true;
-		}
-
-		inline bool Log::CheckAvailableSpace(const std::string &logfname)
-			// Check if the next log message can fit in the remaining available space
-		{
-		#if(MICRO_LOG_BOOST == 1)
-			boost::system::error_code errCode;
-			boost::filesystem::space_info space = boost::filesystem::space(logfname, errCode);
-			if(space.available < maxLogSize) {
-				std::cerr << "Logger error: not enough space available in the current partition (" << space.available << " bytes)." << std::endl;
-				return false;
-			}
-		#endif
-			return true;
-		}
-
-		inline bool Log::CheckAvailableSpace()
-			// Check if the next log message can fit in the remaining available space
-		{
-			return CheckAvailableSpace(filename);
-		}
-
-
-		inline std::string Log::LogTime() {
-			float t = float(std::clock())/CLOCKS_PER_SEC;
-			const size_t sz = 16;
-			char ct[sz];
-			std::snprintf(ct, sz, "% 7.3f  ", t);
-			return std::string(ct);
-		}
-
-		inline std::string Log::LogDate() {
-			std::time_t t = std::time(nullptr);
-			char mbstr[32];
-			std::strftime(mbstr, sizeof(mbstr), "%F %T  ", std::localtime(&t));
-			return std::string(mbstr);
-		}
-
-		inline std::string Log::GetPID() {
-			#ifdef _POSIX_VERSION
-				return std::to_string(getpid());
-			#elif defined WIN32
-				return std::to_string(_getpid());
-			#else
-				return "?";
-			#endif
-		}
-
-		inline std::string Log::GetUID() {
-			#ifdef _POSIX_VERSION
-				return std::to_string(getuid());
-			#elif defined WIN32
-				return "?";
-			#else
-				return "?";
-			#endif
-		}
-
-		inline std::string Log::GetUserName() {
-			#ifdef _POSIX_VERSION
-				return getlogin();
-			#elif defined WIN32
-				GetUserName(username, UNLEN+1);
-				return username;
-			#else
-				return "?";
-			#endif
-		}
 
 
 		#define uLOGS_(logstream, level, localMinLevel)                               \
@@ -697,50 +741,8 @@ inline std::string LogStatistics::Log()
 				uLog::microLog_ofs << bar << uLog::endm
 
 		#ifndef MICRO_LOG_DLL
-		inline void LogLevels() {
-			uLog::microLog_ofs << "Log levels: ";
-			for(size_t i = 0; i < uLog::nLogLevels; ++i)
-				uLog::microLog_ofs << uLog::logLevelTags[i] << " ";
-			uLog::microLog_ofs << std::endl;
-		}
-
-		inline void Log::MinLogLevel() const {
-			uLog::microLog_ofs << "Minimum log level to be logged: " << uLog::logLevelTags[minLevel] << std::endl;
-		}
-
 
 		#endif // MICRO_LOG_DLL
-
-		inline int Log::BackupPrevLog(int mode, const std::string &backupPath)
-		{
-			if(mode == backup_append)
-				return backup_nothing_todo;
-
-			std::ifstream ifs(filename);
-			if(!ifs)
-				return backup_no_file;
-
-			if(mode == backup_overwrite) {
-				std::remove(filename.c_str());
-				return backup_ok;
-			}
-			else if(mode == backup_store_local) {
-				//+TODO - Append the date of the log file, not the current date
-				//+C++17 auto ftime = std::filesystem::last_write_time(logFilename);
-				//+C++17 const std::string bufn = logFilename.c_str() + std::string("_backup") + ftime;
-				const std::string bufn = filename.c_str() + std::string("_backup") + LogDate() + std::string("_") + LogTime();
-				std::rename(filename.c_str(), bufn.c_str());
-				return backup_ok;
-			}
-			else if(mode == backup_store_remote) {
-				//+TODO - see previous code block
-				const std::string bufn = backupPath + filename.c_str() + std::string("_backup") + LogDate() + std::string("_") + LogTime();
-				std::rename(filename.c_str(), bufn.c_str());  //+ Check if a rename is enough to move to remote storage
-				return backup_ok;
-			}
-
-			return backup_nothing_todo;
-		}
 
 #else // MICRO_LOG_ACTIVE
 
