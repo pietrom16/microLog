@@ -153,7 +153,7 @@ namespace uLog {
 	class Log
 	{
 	public:
-		Log(const uLogLevels level);
+		Log(const uLogLevels level = uLogLevels::nolog);
 
 		template<typename T>
 		Log& operator<<(T const& token)
