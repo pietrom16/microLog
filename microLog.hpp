@@ -146,86 +146,6 @@ namespace uLog {
 
 namespace uLog {
 
-    class  Log;
-	struct LogStatistics;
-	struct LogFields;
-
-
-	class Log
-		/// Main the logger class
-	{
-	public:
-		Log(const uLogLevels _level = uLogLevels::nolog);
-
-		template<typename T>
-		Log& operator<<(T const& _token)
-		{
-            #ifdef MICRO_LOG_ACTIVE
-			ofs << _token;
-            #endif
-			return *this;
-		}
-
-		//+TODO
-/*		template<typename T>
-		static Log& operator<<(Log&, T const& _token)
-		{
-			static Log log;
-            #ifdef MICRO_LOG_ACTIVE
-			ofs << _token;
-            #endif
-			return log;
-		}
-*/
-		~Log()
-		{
-            #ifdef MICRO_LOG_ACTIVE
-			ofs << std::endl;
-            #endif
-		}
-
-		void LogLevels();
-		void MinLogLevel() const;
-
-		int BackupPrevLog(int _mode = backup_append, const std::string &_backupPath = std::string());
-
-	public:
-
-		static const int
-		        backup_store_local  = 0,
-		        backup_store_remote = 1,
-		        backup_append       = 2,
-		        backup_overwrite    = 3;
-
-		static const int
-		        backup_ok           = 0,
-		        backup_no_file      = 2,
-		        backup_nothing_todo = 3,
-		        backup_error        = -1;
-
-		static const size_t  maxLogSize = 1024;		// max length of a log message (bytes)
-
-	private:
-
-		bool CheckLogLevel(int _level, int _localLevel = nolog);
-		bool CheckAvailableSpace(const std::string &_logfname);
-		bool CheckAvailableSpace();
-
-		std::string LogTime();
-		std::string LogDate();
-		std::string GetPID();
-		std::string GetUID();
-		std::string GetUserName();
-
-	private:
-
-		static int            minLevel;		// minimum level a message must have to be logged
-		static int            status;		// OK=0, error otherwise
-		static std::string    filename;
-		static std::ofstream  ofs;
-		static LogStatistics  stats;
-	};
-
 
 	struct LogStatistics
 		/// LogStatistics: statistical informations about generated logs
@@ -305,6 +225,72 @@ namespace uLog {
 		}
 	};
 
+
+	class Log
+		/// Main the logger class
+	{
+	public:
+		Log(const uLogLevels _level = uLogLevels::nolog);
+
+		template<typename T>
+		Log& operator<<(T const& _token)
+		{
+            #ifdef MICRO_LOG_ACTIVE
+			ofs << _token;
+            #endif
+			return *this;
+		}
+
+		~Log()
+		{
+            #ifdef MICRO_LOG_ACTIVE
+			ofs << std::endl;
+            #endif
+		}
+
+		void LogLevels();
+		void MinLogLevel();
+
+		int BackupPrevLog(int _mode = backup_append, const std::string &_backupPath = std::string());
+
+	public:
+
+		static const int
+		        backup_store_local  = 0,
+		        backup_store_remote = 1,
+		        backup_append       = 2,
+		        backup_overwrite    = 3;
+
+		static const int
+		        backup_ok           = 0,
+		        backup_no_file      = 2,
+		        backup_nothing_todo = 3,
+		        backup_error        = -1;
+
+		static const size_t  maxLogSize = 1024;		// max length of a log message (bytes)
+
+	private:
+
+		bool CheckLogLevel(int _level, int _localLevel = nolog);
+		bool CheckAvailableSpace(const std::string &_logfname);
+		bool CheckAvailableSpace();
+
+		std::string LogTime();
+		std::string LogDate();
+		std::string GetPID();
+		std::string GetUID();
+		std::string GetUserName();
+
+	private:
+
+		int            minLevel;	// minimum level a message must have to be logged
+		int            status;		// OK=0, error otherwise
+		std::string    filename;
+		std::ofstream  ofs;
+		LogStatistics  stats;
+	};
+
+
 } // uLog
 
 
@@ -321,7 +307,7 @@ inline void Log::LogLevels() {
 	ofs << std::endl;
 }
 
-inline void Log::MinLogLevel() const {
+inline void Log::MinLogLevel() {
 	ofs << "Minimum log level to be logged: " << uLog::logLevelTags[minLevel] << std::endl;
 }
 
