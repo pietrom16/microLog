@@ -156,24 +156,24 @@ namespace uLog {
 	class Log
 	{
 	public:
-		Log(const uLogLevels level = uLogLevels::nolog);
+		Log(const uLogLevels _level = uLogLevels::nolog);
 
 		template<typename T>
-		Log& operator<<(T const& token)
+		Log& operator<<(T const& _token)
 		{
             #ifdef MICRO_LOG_ACTIVE
-			ofs << token;
+			ofs << _token;
             #endif
 			return *this;
 		}
 
 		//+TODO
 /*		template<typename T>
-		static Log& operator<<(Log&, T const& token)
+		static Log& operator<<(Log&, T const& _token)
 		{
 			static Log log;
             #ifdef MICRO_LOG_ACTIVE
-			ofs << token;
+			ofs << _token;
             #endif
 			return log;
 		}
@@ -188,7 +188,7 @@ namespace uLog {
 		void LogLevels();
 		void MinLogLevel() const;
 
-		int BackupPrevLog(int mode = backup_append, const std::string &backupPath = std::string());
+		int BackupPrevLog(int _mode = backup_append, const std::string &_backupPath = std::string());
 
 	public:
 
@@ -209,7 +209,7 @@ namespace uLog {
 	private:
 
 		bool CheckLogLevel(int _level, int _localLevel = nolog);
-		bool CheckAvailableSpace(const std::string &logfname);
+		bool CheckAvailableSpace(const std::string &_logfname);
 		bool CheckAvailableSpace();
 
 		std::string LogTime();
@@ -314,6 +314,9 @@ namespace uLog {
 
 namespace uLog { // Log implementation
 
+inline Log::Log(const uLogLevels _level) {
+
+}
 
 inline void Log::LogLevels() {
 	ofs << "Log levels: ";
@@ -326,20 +329,20 @@ inline void Log::MinLogLevel() const {
 	ofs << "Minimum log level to be logged: " << uLog::logLevelTags[minLevel] << std::endl;
 }
 
-inline int Log::BackupPrevLog(int mode, const std::string &backupPath)
+inline int Log::BackupPrevLog(int _mode, const std::string &_backupPath)
 {
-	if(mode == backup_append)
+	if(_mode == backup_append)
 		return backup_nothing_todo;
 
 	std::ifstream ifs(filename);
 	if(!ifs)
 		return backup_no_file;
 
-	if(mode == backup_overwrite) {
+	if(_mode == backup_overwrite) {
 		std::remove(filename.c_str());
 		return backup_ok;
 	}
-	else if(mode == backup_store_local) {
+	else if(_mode == backup_store_local) {
 		//+TODO - Append the date of the log file, not the current date
 		//+C++17 auto ftime = std::filesystem::last_write_time(logFilename);
 		//+C++17 const std::string bufn = logFilename.c_str() + std::string("_backup") + ftime;
@@ -347,9 +350,9 @@ inline int Log::BackupPrevLog(int mode, const std::string &backupPath)
 		std::rename(filename.c_str(), bufn.c_str());
 		return backup_ok;
 	}
-	else if(mode == backup_store_remote) {
+	else if(_mode == backup_store_remote) {
 		//+TODO - see previous code block
-		const std::string bufn = backupPath + filename.c_str() + std::string("_backup") + LogDate() + std::string("_") + LogTime();
+		const std::string bufn = _backupPath + filename.c_str() + std::string("_backup") + LogDate() + std::string("_") + LogTime();
 		std::rename(filename.c_str(), bufn.c_str());  //+ Check if a rename is enough to move to remote storage
 		return backup_ok;
 	}
@@ -379,12 +382,12 @@ inline bool Log::CheckLogLevel(int _level, int _localLevel)
 	return true;
 }
 
-inline bool Log::CheckAvailableSpace(const std::string &logfname)
+inline bool Log::CheckAvailableSpace(const std::string &_logFName)
 	// Check if the next log message can fit in the remaining available space
 {
 #if(MICRO_LOG_BOOST == 1)
 	boost::system::error_code errCode;
-	boost::filesystem::space_info space = boost::filesystem::space(logfname, errCode);
+	boost::filesystem::space_info space = boost::filesystem::space(_logFName, errCode);
 	if(space.available < maxLogSize) {
 		std::cerr << "Logger error: not enough space available in the current partition (" << space.available << " bytes)." << std::endl;
 		return false;
