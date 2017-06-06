@@ -314,12 +314,11 @@ namespace uLog {
 } // uLog
 
 
-namespace uLog { // Implementation
+namespace uLog { // Log implementation
+} // uLog
 
-/// --- Log ---
 
-
-/// --- LogStatistics ---
+namespace uLog { // LogStatistics implementation
 
 #ifndef MICRO_LOG_DLL
 
@@ -364,8 +363,6 @@ inline std::string LogStatistics::Log()
 }
 
 #endif // MICRO_LOG_DLL
-
-
 
 } // uLog
 
