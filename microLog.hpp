@@ -151,9 +151,8 @@ namespace uLog {
 	struct LogFields;
 
 
-	/// Log: the logger
-
 	class Log
+		/// Main the logger class
 	{
 	public:
 		Log(const uLogLevels _level = uLogLevels::nolog);
@@ -228,9 +227,8 @@ namespace uLog {
 	};
 
 
-	/// LogStatistics: statistical informations about generated logs
-
 	struct LogStatistics
+		/// LogStatistics: statistical informations about generated logs
 	{
 		int nLogs;
 		int nNoLogs, nVerboseLogs, nDetailLogs, nInfoLogs, nWarningLogs, nErrorLogs, nCriticalLogs, nFatalLogs;
@@ -242,8 +240,6 @@ namespace uLog {
 		std::string Log();
 	};
 
-
-	/// LogFields: switches to select logs fields
 
 	struct LogFields
 		/// Flags to enable/disable log message fields
