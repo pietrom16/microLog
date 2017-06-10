@@ -98,8 +98,6 @@ namespace uLog {
 // Import logger's configuration
 #include "microLog_config.hpp"
 
-#ifdef MICRO_LOG_ACTIVE
-
 	#include <bitset>
 	#include <cstdio>
 	#include <cstring>
@@ -148,7 +146,7 @@ namespace uLog {
 
 
 	struct LogStatistics
-		/// LogStatistics: statistical informations about generated logs
+		/// Statistical informations about generated logs
 	{
 		int nLogs;
 		int nNoLogs, nVerboseLogs, nDetailLogs, nInfoLogs, nWarningLogs, nErrorLogs, nCriticalLogs, nFatalLogs;
@@ -227,7 +225,7 @@ namespace uLog {
 
 
 	class Log
-		/// Main the logger class
+		/// Main logger class
 	{
 	public:
 		Log(const uLogLevels _level = uLogLevels::nolog);
@@ -293,6 +291,8 @@ namespace uLog {
 
 } // uLog
 
+
+#ifdef MICRO_LOG_ACTIVE
 
 namespace uLog { // Log implementation
 
@@ -481,6 +481,53 @@ inline std::string LogStatistics::Log()
 #endif // MICRO_LOG_DLL
 
 } // uLog
+
+#elif // MICRO_LOG_ACTIVE
+
+// Dummy implementations
+
+namespace uLog { // Log implementation
+
+inline Log::Log(const uLogLevels _level) {}
+
+inline void Log::LogLevels() {}
+
+inline void Log::MinLogLevel() {}
+
+inline int Log::BackupPrevLog(int _mode, const std::string &_backupPath) { return 0; }
+
+inline bool Log::CheckLogLevel(int _level, int _localLevel) { return false; }
+
+inline bool Log::CheckAvailableSpace(const std::string &_logFName) { return false; }
+
+inline bool Log::CheckAvailableSpace() { return false; }
+
+inline std::string Log::LogTime() { return ""; }
+
+inline std::string Log::LogDate() { return ""; }
+
+inline std::string Log::GetPID() { return ""; }
+
+inline std::string Log::GetUID() { return ""; }
+
+inline std::string Log::GetUserName() { return ""; }
+
+#ifndef MICRO_LOG_DLL
+
+inline void LogStatistics::Init() {}
+
+inline void LogStatistics::Update(int level) {}
+
+inline std::string LogStatistics::Log() { return ""; }
+
+#endif // MICRO_LOG_DLL
+
+} // uLog
+
+#endif // MICRO_LOG_ACTIVE
+
+
+//+TODO --- Old code
 
 namespace uLog {
 	#ifdef MICRO_LOG_ACTIVE
@@ -799,4 +846,3 @@ namespace uLog {
 
 } // namespace uLog
 
-#endif // MICRO_LOG_HPP
