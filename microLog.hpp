@@ -240,7 +240,7 @@ namespace uLog {
 		Log& operator<<(T const& _token)
 		{
             #ifdef MICRO_LOG_ACTIVE
-			ofs << _token;
+			*ostr << _token;
             #endif
 			return *this;
 		}
@@ -248,7 +248,7 @@ namespace uLog {
 		~Log()
 		{
             #ifdef MICRO_LOG_ACTIVE
-			ofs << std::endl;
+			*ostr << std::endl;
             #endif
 		}
 
@@ -290,7 +290,7 @@ namespace uLog {
 		int            minLevel;	// minimum level a message must have to be logged
 		int            status;		// OK=0, error otherwise
 		std::string    filename;
-		std::ofstream  ofs;
+		std::ofstream *ostr;
 		LogStatistics  stats;
 	};
 
