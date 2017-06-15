@@ -293,11 +293,11 @@ namespace uLog {
 		bool CheckAvailableSpace(const std::string &_logfname);
 		bool CheckAvailableSpace();
 
-		std::string LogTime();
-		std::string LogDate();
-		std::string GetPID();
-		std::string GetUID();
-		std::string GetUserName();
+		static std::string LogTime();
+		static std::string LogDate();
+		static std::string GetPID();
+		static std::string GetUID();
+		static std::string GetUserName();
 
 	private:
 
