@@ -234,7 +234,21 @@ namespace uLog {
 		/// Main logger class
 	{
 	public:
-		Log(const uLogLevels _level = uLogLevels::nolog);
+		Log(const std::string &_logFilepath) {
+			#ifdef MICRO_LOG_ACTIVE
+				ostr = new std::ofstream(_logFilepath);
+			#else
+				ostr = 0;
+			#endif
+		}
+
+		Log(std::ofstream &_logOStream) {
+			#ifdef MICRO_LOG_ACTIVE
+				ostr = &_logOStream;
+			#else
+				ostr = 0;
+			#endif
+		}
 
 		template<typename T>
 		Log& operator<<(T const& _token)
