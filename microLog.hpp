@@ -87,6 +87,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define MICRO_LOG_BOOST_THREAD   3
 #define MICRO_LOG_PTHREAD        4
 
+//+T+++ To be moved in a config file
+#define MICRO_LOG_ACTIVE
+#define MICRO_LOG_MIN_LEVEL nolog
+#define MICRO_LOG_THREADING MICRO_LOG_SINGLE_THREAD
+
+
 enum uLogLevels { nolog = 0, verbose, detail, info, warning, error, critical, fatal };
 
 namespace uLog {
