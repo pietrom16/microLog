@@ -79,7 +79,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef MICRO_LOG_HPP
 #define MICRO_LOG_HPP
 
-#define MICRO_LOG_VERSION "7.2.1"
+#define MICRO_LOG_VERSION "8.0.0 alpha"
 
 // Standard threading libraries
 #define MICRO_LOG_SINGLE_THREAD  1
