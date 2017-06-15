@@ -101,9 +101,6 @@ namespace uLog {
     const char       logLevelTags[nLogLevels][9] = { "  ----  ", "VERBOSE ", "DETAIL  ", "INFO    ", "WARNING ", "ERROR   ", "CRITICAL", "FATAL   " };
 }
 
-// Import logger's configuration
-#include "microLog_config.hpp"
-
 #ifdef MICRO_LOG_ACTIVE
 	#include <bitset>
 	#include <cstdio>
