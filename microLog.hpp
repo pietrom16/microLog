@@ -235,6 +235,8 @@ namespace uLog {
 		/// Main logger class
 	{
 	public:
+		Log() : ostr(0) {}
+
 		Log(const std::string &_logFilepath) {
 			#ifdef MICRO_LOG_ACTIVE
 				ostr = new std::ofstream(_logFilepath);
