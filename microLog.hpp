@@ -306,6 +306,50 @@ namespace uLog {
 		std::string    filename;
 		std::ofstream *ostr;
 		LogStatistics  stats;
+
+	public:
+
+		/// Static usage
+
+		static int SetLogFile(const std::string &_logFilepath) {
+			#ifdef MICRO_LOG_ACTIVE
+				s_ostr = new std::ofstream(_logFilepath);
+			#else
+				s_ostr = 0;
+			#endif
+			return 0;
+		}
+
+		static int SetLogStream(std::ofstream &_logOStream) {
+			#ifdef MICRO_LOG_ACTIVE
+				s_ostr = &_logOStream;
+			#else
+				s_ostr = 0;
+			#endif
+			return 0;
+		}
+
+		//Ref: https://stackoverflow.com/questions/8246517/how-to-define-a-static-operator
+		struct Msg {
+			template<typename T>
+			Msg& operator<<(T const& _token) {
+				#ifdef MICRO_LOG_ACTIVE
+				*Log::s_ostr << _token;
+				#endif
+				return *this;
+			}
+		};
+
+		static Msg msg;
+
+	private:
+
+		static int            s_minLevel;	// minimum level a message must have to be logged
+		static int            s_status;		// OK=0, error otherwise
+		static std::string    s_filename;
+		static std::ofstream *s_ostr;
+		static LogStatistics  s_stats;
+
 	};
 
 
