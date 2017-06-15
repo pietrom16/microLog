@@ -104,6 +104,7 @@ namespace uLog {
 // Import logger's configuration
 #include "microLog_config.hpp"
 
+#ifdef MICRO_LOG_ACTIVE
 	#include <bitset>
 	#include <cstdio>
 	#include <cstring>
