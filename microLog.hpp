@@ -256,6 +256,10 @@ namespace uLog {
             #ifdef MICRO_LOG_ACTIVE
 			*ostr << _token;
             #endif
+		Log& operator()(uLogLevels _level) {
+			#ifdef MICRO_LOG_ACTIVE
+			level = _level;
+			#endif
 			return *this;
 		}
 
