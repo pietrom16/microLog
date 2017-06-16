@@ -388,14 +388,14 @@ namespace uLog {
 namespace uLog { // Log implementation
 
 inline void Log::LogLevels() {
-	ofs << "Log levels: ";
+	*ostr << "Log levels: ";
 	for(size_t i = 0; i < uLog::nLogLevels; ++i)
-		ofs << uLog::logLevelTags[i] << " ";
-	ofs << std::endl;
+		*ostr << uLog::logLevelTags[i] << " ";
+	*ostr << std::endl;
 }
 
 inline void Log::MinLogLevel() {
-	ofs << "Minimum log level to be logged: " << uLog::logLevelTags[minLevel] << std::endl;
+	*ostr << "Minimum log level to be logged: " << uLog::logLevelTags[minLevel] << std::endl;
 }
 
 inline int Log::BackupPrevLog(int _mode, const std::string &_backupPath)
