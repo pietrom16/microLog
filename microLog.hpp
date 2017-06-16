@@ -387,10 +387,6 @@ namespace uLog {
 
 namespace uLog { // Log implementation
 
-inline Log::Log(const uLogLevels _level) {
-
-}
-
 inline void Log::LogLevels() {
 	ofs << "Log levels: ";
 	for(size_t i = 0; i < uLog::nLogLevels; ++i)
