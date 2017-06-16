@@ -232,9 +232,9 @@ namespace uLog {
 		/// Main logger class
 	{
 	public:
-		Log() : ostr(0) {}
+		Log() : level(nolog), ostr(0) {}
 
-		Log(const std::string &_logFilepath) {
+		Log(const std::string &_logFilepath) : level(nolog) {
 			#ifdef MICRO_LOG_ACTIVE
 				ostr = new std::ofstream(_logFilepath);
 			#else
@@ -242,7 +242,7 @@ namespace uLog {
 			#endif
 		}
 
-		Log(std::ofstream &_logOStream) {
+		Log(std::ofstream &_logOStream) : level(nolog) {
 			#ifdef MICRO_LOG_ACTIVE
 				ostr = &_logOStream;
 			#else
@@ -301,7 +301,8 @@ namespace uLog {
 
 	private:
 
-		int            minLevel;	// minimum level a message must have to be logged
+		uLogLevels     level;
+		uLogLevels     minLevel;	// minimum level a message must have to be logged
 		int            status;		// OK=0, error otherwise
 		std::string    filename;
 		std::ofstream *ostr;
