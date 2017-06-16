@@ -250,12 +250,13 @@ namespace uLog {
 			#endif
 		}
 
-		template<typename T>
-		Log& operator<<(T const& _token)
+		~Log()
 		{
             #ifdef MICRO_LOG_ACTIVE
-			*ostr << _token;
+			*ostr << std::endl;
             #endif
+		}
+
 		Log& operator()(uLogLevels _level) {
 			#ifdef MICRO_LOG_ACTIVE
 			level = _level;
@@ -263,11 +264,12 @@ namespace uLog {
 			return *this;
 		}
 
-		~Log()
-		{
+		template<typename T>
+		Log& operator<<(T const& _token) {
             #ifdef MICRO_LOG_ACTIVE
-			*ostr << std::endl;
+			*ostr << _token;
             #endif
+			return *this;
 		}
 
 		void LogLevels();
