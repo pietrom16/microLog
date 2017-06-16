@@ -320,9 +320,29 @@ namespace uLog {
 			return 0;
 		}
 
+		static int SetLogFileIfUnset(const std::string &_logFilepath) {
+			#ifdef MICRO_LOG_ACTIVE
+				if(s_ostr == 0)
+					return SetLogFile(_logFilepath);
+			#else
+				s_ostr = 0;
+			#endif
+			return 0;
+		}
+
 		static int SetLogStream(std::ofstream &_logOStream) {
 			#ifdef MICRO_LOG_ACTIVE
 				s_ostr = &_logOStream;
+			#else
+				s_ostr = 0;
+			#endif
+			return 0;
+		}
+
+		static int SetLogStreamIfUnset(std::ofstream &_logOStream) {
+			#ifdef MICRO_LOG_ACTIVE
+				if(s_ostr == 0)
+					s_ostr = &_logOStream;
 			#else
 				s_ostr = 0;
 			#endif
