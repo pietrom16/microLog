@@ -296,7 +296,7 @@ namespace uLog {
 	private:
 
 		bool CheckLogLevel(int _level, int _localLevel = nolog);
-		bool CheckAvailableSpace(const std::string &_logfname);
+		static bool CheckAvailableSpace(const std::string &_logfname);
 		bool CheckAvailableSpace();
 
 		static std::string LogTime();
