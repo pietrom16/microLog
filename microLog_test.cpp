@@ -42,12 +42,16 @@ uLOG_INIT;     // microLog initialization
 
 int Test_microLog(std::string logPath, size_t nTestCases = 1)
 {
-	/// Tests:
-	// - Plain tests
-	// - Multithreading tests - TODO
-	// - Complex tests - TODO
-	// - Border line tests - TODO
-	// - Performace tests - TODO
+	int ret = 0;
+
+	ret += BasicTests(logPath, nTestCases);
+	ret += MultithreadingTests(logPath, nTestCases);
+	ret += ComplexTests(logPath, nTestCases);
+	ret += BorderLineTests(logPath, nTestCases);
+	ret += PerformaceTests(logPath, nTestCases);
+
+	return ret;
+}
 
 #if 0
 	using std::sin;
