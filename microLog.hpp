@@ -267,7 +267,8 @@ namespace uLog {
 		template<typename T>
 		Log& operator<<(T const& _token) {
             #ifdef MICRO_LOG_ACTIVE
-			*ostr << _token;
+			if(level >= minLevel)
+				*ostr << _token;
             #endif
 			return *this;
 		}
@@ -371,7 +372,8 @@ namespace uLog {
 			template<typename T>
 			Msg& operator<<(T const& _token) {
 				#ifdef MICRO_LOG_ACTIVE
-				*Log::s_ostr << _token;
+				if(s_level >= s_minLevel)
+					*Log::s_ostr << _token;
 				#endif
 				return *this;
 			}
