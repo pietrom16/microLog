@@ -82,6 +82,8 @@ int Test_microLog(std::string logPath, size_t nTestCases = 1)
 
 	///--- TEST INIT ---
 
+	uLOG_INIT;     // microLog initialization
+
 	uLOG_START(logPath, uLog::backup_append);
 
 	// Test with custom log file
@@ -139,10 +141,8 @@ int Test_microLog(std::string logPath, size_t nTestCases = 1)
 		uLOGF(logPath, warning, info, "Test without logger initialization.");
 	}
 
-	return 0;
+	return ret;
 }
-
-#endif  // uLOG_TEST_NO_INIT
 #endif
 
 
