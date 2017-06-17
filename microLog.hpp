@@ -370,6 +370,7 @@ namespace uLog {
 
 		static Msg msg;
 
+		static bool CheckLogLevelS(int _level, int _localLevel = nolog);
 		static bool CheckAvailableSpaceS() {
 			return CheckAvailableSpace(s_filePath);
 		}
@@ -522,6 +523,28 @@ inline std::string Log::GetUserName() {
 		return "?";
 	#endif
 }
+
+inline bool Log::CheckLogLevelS(int _level, int _localLevel)
+{
+	#ifndef MICRO_LOG_DLL
+	    s_stats.Update(_level);
+	#endif
+
+	if(s_status != 0) {        // cannot log if status is not clean
+		if(_level > error)
+			std::cerr << "Error " << s_status << ": logger disabled, and a critical error has been generated!" << std::endl;
+		return false;
+	}
+
+	if(_level < MICRO_LOG_MIN_LEVEL || _level < _localLevel)
+		return false;
+
+	if(_localLevel == nolog && _level < s_minLevel)
+		return false;
+
+	return true;
+}
+
 
 } // uLog
 
