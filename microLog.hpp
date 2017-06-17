@@ -274,6 +274,7 @@ namespace uLog {
 
 		void LogLevels();
 		void MinLogLevel();
+		void LogStats() const;
 
 		int BackupPrevLog(int _mode = backup_append, const std::string &_backupPath = std::string());
 
