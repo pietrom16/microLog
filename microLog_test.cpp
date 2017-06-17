@@ -24,21 +24,45 @@
 #include <string>
 
 
-#ifdef uLOG_TEST_NO_INIT        // Test without logger initialization
-
-int Test_microLog(std::string logPath, int nTestCases = 1)
+int BasicTests(std::string logPath, size_t nTestCases = 1)
 {
-	for(size_t n = 0; n < nTestCases; ++n)
-	{
-		uLOGF(logPath, warning, info, "Test n. " << n + 1 << " without logger initialization.");
-	}
-
-	return 0;
+	//+TODO
+	int ret = 0;
+	return ret;
 }
 
-#else // uLOG_TEST_NO_INIT
 
-uLOG_INIT;     // microLog initialization
+int MultithreadingTests(std::string logPath, size_t nTestCases = 1)
+{
+	//+TODO
+	int ret = 0;
+	return ret;
+}
+
+
+int ComplexTests(std::string logPath, size_t nTestCases = 1)
+{
+	//+TODO
+	int ret = 0;
+	return ret;
+}
+
+
+int BorderLineTests(std::string logPath, size_t nTestCases = 1)
+{
+	//+TODO
+	int ret = 0;
+	return ret;
+}
+
+
+int PerformaceTests(std::string logPath, size_t nTestCases = 1)
+{
+	//+TODO
+	int ret = 0;
+	return ret;
+}
+
 
 int Test_microLog(std::string logPath, size_t nTestCases = 1)
 {
