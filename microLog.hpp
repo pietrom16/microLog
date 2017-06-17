@@ -369,6 +369,10 @@ namespace uLog {
 
 		static Msg msg;
 
+		static bool CheckAvailableSpaceS() {
+			return CheckAvailableSpace(s_filename);
+		}
+
 	private:
 
 		static int            s_minLevel;	// minimum level a message must have to be logged
