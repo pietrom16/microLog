@@ -320,7 +320,8 @@ namespace uLog {
 
 		static int SetLogFile(const std::string &_logFilepath) {
 			#ifdef MICRO_LOG_ACTIVE
-				s_ostr = new std::ofstream(_logFilepath);
+				s_filename = _logFilepath;
+				s_ostr = new std::ofstream(s_filename);
 			#else
 				s_ostr = 0;
 			#endif
