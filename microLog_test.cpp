@@ -149,8 +149,6 @@ int Test_microLog(std::string logPath, size_t nTestCases = 1)
 int main()
 {
 	int testResult = 0;
-	int nErrors = 0;
-	int nWarnings = 0;
 
 	std::cout << "\n--- microLog test ---\n" << std::endl;
 
@@ -164,7 +162,7 @@ int main()
 		std::cout << "Select log file path:\n"
 				  << "1. Local directory.\n"
 				  << "2. Ram disk (" << ramDiskPath << ").\n"
-				  << "   Note: check you have a ram disk on your system, a set its path in the source code (microLog_test.cpp).\n" << std::endl;
+				  << "   Note: check you have a ram disk on your system, and set its path in the source code (microLog_test.cpp).\n" << std::endl;
 
 		std::cin >> pathOpt;
 	}
@@ -179,10 +177,6 @@ int main()
 	std::cout << "Log file path:     " << logPath << std::endl;
 
 	testResult = Test_microLog(logPath);
-
-#ifndef uLOG_TEST_NO_INIT        // Test without logger initialization
-	uLog::Statistics::Log();
-#endif
 
 	std::cout << "\nTest completed." << std::endl;
 
