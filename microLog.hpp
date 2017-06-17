@@ -644,6 +644,8 @@ inline std::string LogStatistics::Log() { return ""; }
 
 #endif // MICRO_LOG_HPP
 
+
+#if 0
 //+TODO --- Old code
 
 namespace uLog {
@@ -963,3 +965,4 @@ namespace uLog {
 
 } // namespace uLog
 
+#endif

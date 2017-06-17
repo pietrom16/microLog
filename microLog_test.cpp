@@ -49,6 +49,7 @@ int Test_microLog(std::string logPath, size_t nTestCases = 1)
 	// - Border line tests - TODO
 	// - Performace tests - TODO
 
+#if 0
 	using std::sin;
 
 	///--- TEST INIT ---
@@ -114,6 +115,7 @@ int Test_microLog(std::string logPath, size_t nTestCases = 1)
 }
 
 #endif  // uLOG_TEST_NO_INIT
+#endif
 
 
 int main()
