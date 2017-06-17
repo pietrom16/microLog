@@ -360,6 +360,14 @@ namespace uLog {
 
 		//Ref: https://stackoverflow.com/questions/8246517/how-to-define-a-static-operator
 		struct Msg {
+
+			Msg& operator()(uLogLevels _level) {
+				#ifdef MICRO_LOG_ACTIVE
+				s_level = _level;
+				#endif
+				return *this;
+			}
+
 			template<typename T>
 			Msg& operator<<(T const& _token) {
 				#ifdef MICRO_LOG_ACTIVE
@@ -378,7 +386,8 @@ namespace uLog {
 
 	private:
 
-		static int            s_minLevel;	// minimum level a message must have to be logged
+		static uLogLevels     s_level;
+		static uLogLevels     s_minLevel;	// minimum level a message must have to be logged
 		static int            s_status;		// OK=0, error otherwise
 		static std::string    s_filePath;
 		static std::ofstream *s_ostr;
