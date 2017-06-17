@@ -642,6 +642,7 @@ inline std::string LogStatistics::Log() { return ""; }
 
 #endif // MICRO_LOG_ACTIVE
 
+#endif // MICRO_LOG_HPP
 
 //+TODO --- Old code
 
