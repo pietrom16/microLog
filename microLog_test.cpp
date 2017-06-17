@@ -23,11 +23,19 @@
 #include <iostream>
 #include <string>
 
+using namespace uLog;
+
 
 int BasicTests(std::string logPath, size_t nTestCases = 1)
 {
 	//+TODO
 	int ret = 0;
+
+	Log log(logPath);
+
+	log << "Test log message: static, unspecified log level, " << 123.4;
+	log(error) << "Test log message: static.";
+
 	return ret;
 }
 
@@ -36,6 +44,11 @@ int StaticTests(std::string logPath, size_t nTestCases = 1)
 {
 	//+TODO
 	int ret = 0;
+
+	ret += Log::SetLogFile(logPath);
+	Log::msg << "Test log message: static, unspecified log level, " << 123.4;
+	Log::msg(error) << "Test log message: static.";
+
 	return ret;
 }
 
@@ -177,7 +190,7 @@ int main()
 	}
 
 	if(pathOpt == '2')
-		logPath.append("/Volumes/ramdisk/");
+		logPath.append(ramDiskPath);
 
 	logPath.append("myProg.log");
 
