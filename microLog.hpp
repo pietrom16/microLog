@@ -310,7 +310,7 @@ namespace uLog {
 		uLogLevels     level;
 		uLogLevels     minLevel;	// minimum level a message must have to be logged
 		int            status;		// OK=0, error otherwise
-		std::string    filename;
+		std::string    filePath;
 		std::ofstream *ostr;
 		LogStatistics  stats;
 
@@ -320,8 +320,8 @@ namespace uLog {
 
 		static int SetLogFile(const std::string &_logFilepath) {
 			#ifdef MICRO_LOG_ACTIVE
-				s_filename = _logFilepath;
-				s_ostr = new std::ofstream(s_filename);
+				s_filePath = _logFilepath;
+				s_ostr = new std::ofstream(s_filePath);
 			#else
 				s_ostr = 0;
 			#endif
@@ -371,14 +371,14 @@ namespace uLog {
 		static Msg msg;
 
 		static bool CheckAvailableSpaceS() {
-			return CheckAvailableSpace(s_filename);
+			return CheckAvailableSpace(s_filePath);
 		}
 
 	private:
 
 		static int            s_minLevel;	// minimum level a message must have to be logged
 		static int            s_status;		// OK=0, error otherwise
-		static std::string    s_filename;
+		static std::string    s_filePath;
 		static std::ofstream *s_ostr;
 		static LogStatistics  s_stats;
 
@@ -408,26 +408,26 @@ inline int Log::BackupPrevLog(int _mode, const std::string &_backupPath)
 	if(_mode == backup_append)
 		return backup_nothing_todo;
 
-	std::ifstream ifs(filename);
+	std::ifstream ifs(filePath);
 	if(!ifs)
 		return backup_no_file;
 
 	if(_mode == backup_overwrite) {
-		std::remove(filename.c_str());
+		std::remove(filePath.c_str());
 		return backup_ok;
 	}
 	else if(_mode == backup_store_local) {
 		//+TODO - Append the date of the log file, not the current date
-		//+C++17 auto ftime = std::filesystem::last_write_time(logFilename);
-		//+C++17 const std::string bufn = logFilename.c_str() + std::string("_backup") + ftime;
-		const std::string bufn = filename.c_str() + std::string("_backup") + LogDate() + std::string("_") + LogTime();
-		std::rename(filename.c_str(), bufn.c_str());
+		//+C++17 auto ftime = std::filesystem::last_write_time(filePath);
+		//+C++17 const std::string bufn = filePath.c_str() + std::string("_backup") + ftime;
+		const std::string bufn = filePath.c_str() + std::string("_backup") + LogDate() + std::string("_") + LogTime();
+		std::rename(filePath.c_str(), bufn.c_str());
 		return backup_ok;
 	}
 	else if(_mode == backup_store_remote) {
 		//+TODO - see previous code block
-		const std::string bufn = _backupPath + filename.c_str() + std::string("_backup") + LogDate() + std::string("_") + LogTime();
-		std::rename(filename.c_str(), bufn.c_str());  //+ Check if a rename is enough to move to remote storage
+		const std::string bufn = _backupPath + filePath.c_str() + std::string("_backup") + LogDate() + std::string("_") + LogTime();
+		std::rename(filePath.c_str(), bufn.c_str());  //+ Check if a rename is enough to move to remote storage
 		return backup_ok;
 	}
 
@@ -473,7 +473,7 @@ inline bool Log::CheckAvailableSpace(const std::string &_logFName)
 inline bool Log::CheckAvailableSpace()
 	// Check if the next log message can fit in the remaining available space
 {
-	return CheckAvailableSpace(filename);
+	return CheckAvailableSpace(filePath);
 }
 
 
