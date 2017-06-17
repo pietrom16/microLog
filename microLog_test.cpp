@@ -32,6 +32,14 @@ int BasicTests(std::string logPath, size_t nTestCases = 1)
 }
 
 
+int StaticTests(std::string logPath, size_t nTestCases = 1)
+{
+	//+TODO
+	int ret = 0;
+	return ret;
+}
+
+
 int MultithreadingTests(std::string logPath, size_t nTestCases = 1)
 {
 	//+TODO
@@ -69,6 +77,7 @@ int Test_microLog(std::string logPath, size_t nTestCases = 1)
 	int ret = 0;
 
 	ret += BasicTests(logPath, nTestCases);
+	ret += StaticTests(logPath, nTestCases);
 	ret += MultithreadingTests(logPath, nTestCases);
 	ret += ComplexTests(logPath, nTestCases);
 	ret += BorderLineTests(logPath, nTestCases);
