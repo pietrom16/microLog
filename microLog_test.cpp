@@ -28,13 +28,15 @@ using namespace uLog;
 
 int BasicTests(std::string logPath, size_t nTestCases = 1)
 {
-	//+TODO
+	//+TEST
 	int ret = 0;
 
 	Log log(logPath);
 
-	log << "Test log message: static, unspecified log level, " << 123.4;
-	log(error) << "Test log message: static.";
+	for(size_t i = 0; i < nTestCases; ++i) {
+		log << "Test log message " << i << ": unspecified log level, " << 123.4;
+		log(error) << "Test log message " << i << ", " << 234.5;
+	}
 
 	return ret;
 }
@@ -42,12 +44,15 @@ int BasicTests(std::string logPath, size_t nTestCases = 1)
 
 int StaticTests(std::string logPath, size_t nTestCases = 1)
 {
-	//+TODO
+	//+TEST
 	int ret = 0;
 
 	ret += Log::SetLogFile(logPath);
-	Log::msg << "Test log message: static, unspecified log level, " << 123.4;
-	Log::msg(error) << "Test log message: static.";
+
+	for(size_t i = 0; i < nTestCases; ++i) {
+		Log::msg << "Test log message " << i << ": static, unspecified log level, " << 123.4;
+		Log::msg(error) << "Test log message " << i << ": static, " << 234.5;
+	}
 
 	return ret;
 }
