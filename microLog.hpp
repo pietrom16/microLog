@@ -274,7 +274,7 @@ namespace uLog {
 		}
 
 		void LogLevels();
-		void MinLogLevel();
+		void LogMinLogLevel();
 		void LogStats() const;
 
 		int BackupPrevLog(int _mode = backup_append, const std::string &_backupPath = std::string());
@@ -412,7 +412,7 @@ inline void Log::LogLevels() {
 	*ostr << std::endl;
 }
 
-inline void Log::MinLogLevel() {
+inline void Log::LogMinLogLevel() {
 	*ostr << "Minimum log level to be logged: " << uLog::logLevelTags[minLevel] << std::endl;
 }
 
