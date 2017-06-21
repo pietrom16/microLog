@@ -36,6 +36,7 @@ int BasicTests(std::string logPath, size_t nTestCases = 1)
 	for(size_t i = 0; i < nTestCases; ++i) {
 		log << "Test log message " << i << ": unspecified log level, " << 123.4;
 		log(error) << "Test log message " << i << ", " << 234.5;
+		log(detail) << "Test log message " << i << " below threshold.";
 	}
 
 	return ret;
@@ -52,6 +53,7 @@ int StaticTests(std::string logPath, size_t nTestCases = 1)
 	for(size_t i = 0; i < nTestCases; ++i) {
 		Log::msg << "Test log message " << i << ": static, unspecified log level, " << 123.4;
 		Log::msg(error) << "Test log message " << i << ": static, " << 234.5;
+		Log::msg(detail) << "Test log message " << i << " below threshold.";
 	}
 
 	return ret;
