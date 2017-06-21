@@ -273,8 +273,8 @@ namespace uLog {
 			return *this;
 		}
 
-		uLogLevels SetLogLevelThreshold(uLogLevels _newThreshold) {
-			minLevel = std::min(_newThreshold, fatal);
+		uLogLevels SetMinLogLevel(uLogLevels _newMinLogLevel) {
+			minLevel = std::min(_newMinLogLevel, fatal);
 			return minLevel;
 		}
 
