@@ -87,6 +87,11 @@ int BorderLineTests(std::string logPath, size_t nTestCases = 1)
 int PerformaceTests(std::string logPath, size_t nTestCases = 1)
 {
 	//+TODO
+	// Compare time delays:
+	//   - Without logs
+	//   - With disabled logs
+	//   - With logs below threshold
+	//   - With logs above threshold
 	int ret = 0;
 	return ret;
 }
