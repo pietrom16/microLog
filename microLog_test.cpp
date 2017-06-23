@@ -88,8 +88,6 @@ int BorderLineTests(std::string logPath, size_t nTestCases = 1)
 
 int PerformaceTests(std::string logPath, size_t nTestCases = 1)
 {
-	int ret = 0;
-
 	Log log(logPath);
 
 	log.SetMinLogLevel(warning);
@@ -143,7 +141,7 @@ int PerformaceTests(std::string logPath, size_t nTestCases = 1)
 
 	}
 
-	return ret;
+	return 0;
 }
 
 
