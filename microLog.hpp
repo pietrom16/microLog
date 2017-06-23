@@ -566,6 +566,19 @@ inline bool Log::CheckLogLevelS(int _level, int _localLevel)
 } // uLog
 
 
+#define MICRO_LOG_INIT                      \
+	namespace uLog {                        \
+		Log::Msg       Log::msg;            \
+		uLogLevels     Log::s_level;        \
+		uLogLevels     Log::s_minLevel;     \
+		int            Log::s_status = 0;   \
+		std::string    Log::s_filePath;     \
+		std::ofstream  Log::*s_ostr = 0;    \
+		LogStatistics  Log::s_stats;        \
+	} // namespace uLog
+
+
+
 namespace uLog { // LogStatistics implementation
 
 #ifndef MICRO_LOG_DLL

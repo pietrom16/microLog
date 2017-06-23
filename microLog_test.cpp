@@ -27,6 +27,8 @@
 
 using namespace uLog;
 
+MICRO_LOG_INIT;
+
 
 int BasicTests(std::string logPath, size_t nTestCases = 1)
 {
