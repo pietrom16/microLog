@@ -97,10 +97,10 @@ int PerformaceTests(std::string logPath, size_t nTestCases = 1)
 	{
 		if(j == 0) {				// no logs
 			std::cout << "PerformaceTests, no logs, t = ";
-			continue;
 		}
-		else if(j == 1) {			// disabled logs (undefine MICRO_LOG_ACTIVE)
-			std::cout << "PerformaceTests, disabled logs, t = ";
+		else if(j == 1) {			// disabled logs
+			std::cout << "PerformaceTests, disabled logs (undefine MICRO_LOG_ACTIVE), t = ";
+			logLevel = nolog;
 		}
 		else if(j == 2) {			// logs below threshold
 			std::cout << "PerformaceTests, logs below threshold, t = ";
