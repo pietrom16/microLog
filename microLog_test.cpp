@@ -112,7 +112,6 @@ int PerformaceTests(std::string logPath, size_t nTestCases = 1)
 		}
 
 		auto t0 = std::chrono::high_resolution_clock::now();
-		auto t0_tmp = std::chrono::system_clock::now(); //+T
 
 		//------Begin test code
 		// ...normal processing should take place here
@@ -126,24 +125,10 @@ int PerformaceTests(std::string logPath, size_t nTestCases = 1)
 		//------End test code
 
 		auto t1 = std::chrono::high_resolution_clock::now();
-		auto t1_tmp = std::chrono::system_clock::now(); //+T
 
-		//+TODO - Report time to run this code block
+		std::chrono::duration<double> delta_t = t1 - t0;
 
-		//+TODO - Compute difference and print high resolution time interval
-
-		std::time_t ct0_tmp = std::chrono::system_clock::to_time_t(t0_tmp); //+T
-		std::time_t ct1_tmp = std::chrono::system_clock::to_time_t(t1_tmp); //+T
-		auto delay_tmp = ct1_tmp - ct0_tmp; //+T
-		std::cout << delay_tmp << std::endl; //+T
-
-		/* //+TEST
-		auto now = std::chrono::system_clock::now();
-		std::time_t now_c = std::chrono::system_clock::to_time_t(now - std::chrono::hours(24));
-		std::cout << "One day ago, the time was "
-				  << std::put_time(std::localtime(&now_c), "%F %T") << '\n';
-		*/
-
+		std::cout << delta_t.count() << " s" << std::endl;
 	}
 
 	return 0;
