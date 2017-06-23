@@ -95,8 +95,6 @@ int PerformaceTests(std::string logPath, size_t nTestCases = 1)
 
 	for(size_t j = 0; j < 4; ++j)
 	{
-		// ...normal processing should take place here
-
 		if(j == 0) {				// no logs
 			std::cout << "PerformaceTests, no logs, t = ";
 			continue;
@@ -116,9 +114,16 @@ int PerformaceTests(std::string logPath, size_t nTestCases = 1)
 		auto t0 = std::chrono::high_resolution_clock::now();
 		auto t0_tmp = std::chrono::system_clock::now(); //+T
 
-		for(size_t i = 0; i < nTestCases; ++i) {
-			log(logLevel) << "Test set n. " << j << ". Test log message " << i << ", " << 234.5;
+		//------Begin test code
+		// ...normal processing should take place here
+
+		if(j != 0)
+		{
+			for(size_t i = 0; i < nTestCases; ++i) {
+				log(logLevel) << "Test set n. " << j << ". Test log message " << i << ", " << 234.5;
+			}
 		}
+		//------End test code
 
 		auto t1 = std::chrono::high_resolution_clock::now();
 		auto t1_tmp = std::chrono::system_clock::now(); //+T
