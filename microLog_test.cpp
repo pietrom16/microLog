@@ -20,6 +20,8 @@
 #include "microLog.hpp"
 
 #include <cmath>
+#include <chrono>
+#include <ctime>
 #include <iostream>
 #include <string>
 
@@ -86,13 +88,61 @@ int BorderLineTests(std::string logPath, size_t nTestCases = 1)
 
 int PerformaceTests(std::string logPath, size_t nTestCases = 1)
 {
-	//+TODO
-	// Compare time delays:
-	//   - Without logs
-	//   - With disabled logs
-	//   - With logs below threshold
-	//   - With logs above threshold
 	int ret = 0;
+
+	Log log(logPath);
+
+	log.SetMinLogLevel(warning);
+	uLogLevels logLevel = nolog;
+
+	for(size_t j = 0; j < 4; ++j)
+	{
+		// ...normal processing should take place here
+
+		if(j == 0) {				// no logs
+			std::cout << "PerformaceTests, no logs, t = ";
+			continue;
+		}
+		else if(j == 1) {			// disabled logs (undefine MICRO_LOG_ACTIVE)
+			std::cout << "PerformaceTests, disabled logs, t = ";
+		}
+		else if(j == 2) {			// logs below threshold
+			std::cout << "PerformaceTests, logs below threshold, t = ";
+			logLevel = verbose;
+		}
+		else if(j == 3) {			// logs above threshold
+			std::cout << "PerformaceTests, logs above threshold, t = ";
+			logLevel = error;
+		}
+
+		auto t0 = std::chrono::high_resolution_clock::now();
+		auto t0_tmp = std::chrono::system_clock::now(); //+T
+
+		for(size_t i = 0; i < nTestCases; ++i) {
+			log(logLevel) << "Test set n. " << j << ". Test log message " << i << ", " << 234.5;
+		}
+
+		auto t1 = std::chrono::high_resolution_clock::now();
+		auto t1_tmp = std::chrono::system_clock::now(); //+T
+
+		//+TODO - Report time to run this code block
+
+		//+TODO - Compute difference and print high resolution time interval
+
+		std::time_t ct0_tmp = std::chrono::system_clock::to_time_t(t0_tmp); //+T
+		std::time_t ct1_tmp = std::chrono::system_clock::to_time_t(t1_tmp); //+T
+		auto delay_tmp = ct1_tmp - ct0_tmp; //+T
+		std::cout << delay_tmp << std::endl; //+T
+
+		/* //+TEST
+		auto now = std::chrono::system_clock::now();
+		std::time_t now_c = std::chrono::system_clock::to_time_t(now - std::chrono::hours(24));
+		std::cout << "One day ago, the time was "
+				  << std::put_time(std::localtime(&now_c), "%F %T") << '\n';
+		*/
+
+	}
+
 	return ret;
 }
 
