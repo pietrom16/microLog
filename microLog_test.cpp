@@ -228,6 +228,7 @@ int main()
 
 	std::string logPath;
 	std::string ramDiskPath = "/Volumes/ramdisk/";
+	size_t nTestCases = 10;
 
 	char pathOpt = '2';
 
@@ -250,7 +251,7 @@ int main()
 	std::cout << "microLog version:  " << MICRO_LOG_VERSION << "\n";
 	std::cout << "Log file path:     " << logPath << std::endl;
 
-	testResult = Test_microLog(logPath);
+	testResult = Test_microLog(logPath, nTestCases);
 
 	std::cout << "\nTest completed." << std::endl;
 
