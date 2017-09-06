@@ -12,6 +12,7 @@
 #ifdef MICRO_LOG_TEST
 
 //#define uLOG_TEST_NO_INIT
+#define MICRO_LOG_ACTIVE
 
 #ifdef uLOG_TEST_NO_INIT        // Test without logger initialization
 	#define MICRO_LOG_DLL
@@ -25,10 +26,10 @@
 #include <iostream>
 #include <string>
 
+
 using namespace uLog;
 
 MICRO_LOG_INIT;
-
 
 int BasicTests(std::string logPath, size_t nTestCases = 1)
 {
@@ -38,8 +39,10 @@ int BasicTests(std::string logPath, size_t nTestCases = 1)
 	Log log(logPath);
 
 	for(size_t i = 0; i < nTestCases; ++i) {
-		log << "Test log message " << i << ": unspecified log level, " << 123.4;
-		log(error) << "Test log message " << i << ", " << 234.5;
+//		log(error) << "Test log message " << i << ", " << 234.5 << ": manual flush.\n";
+//		log << "Test log message " << i << ": unspecified log level, " << 123.4;
+		log(error) << "Test log message " << i << ", " << 234.5 << std::endl;
+		exit(0); //+T+
 		log(detail) << "Test log message " << i << " below threshold.";
 	}
 
@@ -55,9 +58,15 @@ int StaticTests(std::string logPath, size_t nTestCases = 1)
 	ret += Log::SetLogFile(logPath);
 
 	for(size_t i = 0; i < nTestCases; ++i) {
-		Log::msg << "Test log message " << i << ": static, unspecified log level, " << 123.4;
-		Log::msg(error) << "Test log message " << i << ": static, " << 234.5;
-		Log::msg(detail) << "Test log message " << i << " below threshold.";
+//		Log::msg << "Test log message: static\n";
+//		Log::msg(error) << "Test log message " << i << ", " << 234.5 << ": static, manual flush.\n";
+//+		Log::msg << "Test log message " << i << ": static, unspecified log level, " << 123.4;
+//		Log::msg(error) << "Test log message " << i << ": static, " << 234.5;
+//		Log::msg(detail) << "Test log message " << i << ": static, below threshold.";
+//		Log()(error) << "Test log message " << i << ", " << 234.5 << ": static, manual flush.\n";
+//		Log() << "Test log message " << i << ": static, unspecified log level, " << 123.4;
+//		Log()(error) << "Test log message " << i << ": static, " << 234.5;
+//		Log()(detail) << "Test log message " << i << ": static, below threshold.";
 	}
 
 	return ret;
@@ -121,7 +130,7 @@ int PerformaceTests(std::string logPath, size_t nTestCases = 1)
 		if(j != 0)
 		{
 			for(size_t i = 0; i < nTestCases; ++i) {
-				log(logLevel) << "Test set n. " << j << ". Test log message " << i << ", " << 234.5;
+//+				log(logLevel) << "Test set n. " << j << ". Test log message " << i << ", " << 234.5;
 			}
 		}
 		//------End test code
@@ -143,10 +152,10 @@ int Test_microLog(std::string logPath, size_t nTestCases = 1)
 
 	ret += BasicTests(logPath, nTestCases);
 	ret += StaticTests(logPath, nTestCases);
-	ret += MultithreadingTests(logPath, nTestCases);
-	ret += ComplexTests(logPath, nTestCases);
-	ret += BorderLineTests(logPath, nTestCases);
-	ret += PerformaceTests(logPath, nTestCases);
+//	ret += MultithreadingTests(logPath, nTestCases);
+//	ret += ComplexTests(logPath, nTestCases);
+//	ret += BorderLineTests(logPath, nTestCases);
+//	ret += PerformaceTests(logPath, nTestCases);
 
 	return ret;
 }
@@ -228,7 +237,7 @@ int main()
 
 	std::string logPath;
 	std::string ramDiskPath = "/Volumes/ramdisk/";
-	size_t nTestCases = 10;
+	size_t nTestCases = 2;
 
 	char pathOpt = '2';
 
@@ -246,6 +255,15 @@ int main()
 		logPath.append(ramDiskPath);
 
 	logPath.append("myProg.log");
+
+	///+TEST-OK
+	{
+		std::ofstream *ofs = new std::ofstream(logPath);
+		*ofs << "TEST with ofstream pointer." << std::endl;
+		ofs->close();
+		//exit(0); //+T+
+	}
+	///+TEST-END
 
 	std::cout << "Test version:      " << VERSION << "\n";
 	std::cout << "microLog version:  " << MICRO_LOG_VERSION << "\n";

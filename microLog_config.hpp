@@ -25,7 +25,7 @@
 
 namespace uLog {
     static const int
-		logHighLevel = detail,
+		logHighLevel = detail2,
 	    logMountDisk = warning,
 		logProcess = detail,
 		logUnitTests = detail,

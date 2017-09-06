@@ -260,10 +260,12 @@ namespace uLog {
 		Log& operator()(uLogLevels _level) {
 			#ifdef MICRO_LOG_ACTIVE
 			level = _level;
+			if(level >= minLevel)
+				*ostr << std::endl;
 			#endif
 			return *this;
 		}
-
+//+OK
 		template<typename T>
 		Log& operator<<(T const& _token) {
             #ifdef MICRO_LOG_ACTIVE
@@ -273,6 +275,15 @@ namespace uLog {
 			return *this;
 		}
 
+/*		template<typename T>
+		Log& operator<<() {		//+TODO - Flush log
+            #ifdef MICRO_LOG_ACTIVE
+			if(level >= minLevel)
+				*ostr << std::endl;
+            #endif
+			return *this;
+		}
+*/
 		uLogLevels SetMinLogLevel(uLogLevels _newMinLogLevel) {
 			minLevel = std::min(_newMinLogLevel, fatal);
 			return minLevel;
@@ -365,6 +376,29 @@ namespace uLog {
 		}
 
 		//Ref: https://stackoverflow.com/questions/8246517/how-to-define-a-static-operator
+
+
+		//+B: Error: overloaded 'operator<<' cannot be a static member function
+/*		static Log& operator<< (Log&, const std::string &_token)
+		{
+		     static Log instance;
+
+			#ifdef MICRO_LOG_ACTIVE
+			if(s_level >= s_minLevel)
+				*Log::s_ostr << _token;
+			#endif
+
+			return instance;
+		}
+*/
+
+/*		//+B: Error: overloaded 'operator<<' cannot be a static member function
+		static Log operator<< (Log, const std::string &_token)
+		{
+		     *Log::s_ostr << _token;
+		     return Log();
+		}
+*/
 		struct Msg {
 
 			Msg& operator()(uLogLevels _level) {
